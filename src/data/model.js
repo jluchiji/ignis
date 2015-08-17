@@ -41,7 +41,7 @@ export default function model(name, source, callback) {
 
   /* Otherwise, create a new model. */
   let src = DataSource(source);
-  if (store[name]) { throw new Error(`Model already exists: ${name}`); }
+  if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
   store.set(name, callback(src));
 }
 

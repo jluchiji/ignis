@@ -7,7 +7,6 @@
 
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
-import { store }   from '../symbols';
 
 const  debug     = Debug('ignis:model');
 

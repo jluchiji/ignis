@@ -36,13 +36,6 @@ describe('model(2)', function() {
       return { get: data.test };
     });
 
-    var model = Model('test');
-    expect(model).to.have.property('get');
-    expect(model.get).to.be.a('function');
-
-    model.get('foo');
-    expect(source.test.calledWith('foo')).to.equal(true);
-
   });
 
   it('should attach the model to the model store', function() {
@@ -80,4 +73,15 @@ describe('model(2)', function() {
     }).to.throw('Data source not found: no-such-source');
   });
 
+  it('should throw when attempting to create a duplicate model', function() {
+    var source = this.source;
+
+    Model('test', 'test-data', function() { return source; });
+    expect(Model('test')).to.equal(source);
+
+    expect(function() {
+      Model('test', 'test-data', function() { return source; });
+    }).to.throw('Model already exists: test');
+
+  });
 });
