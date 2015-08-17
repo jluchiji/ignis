@@ -25,6 +25,7 @@
     "chai-as-promised": "^5.1.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.0",
+    "gulp-istanbul": "^0.10.0",
     "gulp-jscs": "^2.0.0",
     "gulp-jscs-stylish": "^1.1.2",
     "gulp-jshint": "^1.11.2",
@@ -35,6 +36,7 @@
   },
   "dependencies": {
     "bluebird": "^2.9.34",
+    "cache-manager": "^1.0.0",
     "debug": "^2.2.0",
     "lodash": "^3.10.1"
   },
@@ -65,5 +67,8 @@
   "jscsConfig": {
     "esnext": true,
     "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties"
+  },
+  "babel": {
+    "auxiliaryCommentBefore": "istanbul ignore next"
   }
 }
