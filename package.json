@@ -1,0 +1,28 @@
+{
+  "name": "ignis",
+  "version": "0.1.0",
+  "description": "Rapidly create modular API servers.",
+  "main": "gulpfile.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jluchiji/node-ignis.git"
+  },
+  "author": "Denis Luchkin-Zhou <denis@ricepo.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jluchiji/node-ignis/issues"
+  },
+  "homepage": "https://github.com/jluchiji/node-ignis",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.0",
+    "gulp-jscs": "^2.0.0",
+    "gulp-jshint": "^1.11.2"
+  }
+}
