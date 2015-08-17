@@ -26,10 +26,11 @@ var    store     = new Map();
  *
  * @description                Gets/sets a model of the ignis.js
  * @param          {name}      Name of the model.
+ * @param          {source}    (optional) Name of the data source.
  * @param          {callback}  (optional) Callback that returns a model object.
  * @returns        {model}     Resulting model object.
  */
-export default function model(name, callback) {
+export default function model(name, source, callback) {
 
   /* Get the model with the specified name if callback is not specified. */
   if (typeof callback !== 'function') {
@@ -39,10 +40,9 @@ export default function model(name, callback) {
   }
 
   /* Otherwise, create a new model. */
-  let source = DataSource.connection();
-  if (!source)     { throw new Error('No data connection available.'); }
+  let src = DataSource(source);
   if (store[name]) { throw new Error(`Model already exists: ${name}`); }
-  store.set(name, callback(source));
+  store.set(name, callback(src));
 }
 
 

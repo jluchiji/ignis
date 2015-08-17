@@ -12,41 +12,46 @@ import { store }   from '../symbols';
 const  debug     = Debug('ignis:model');
 
 // Database connection
-var connection = null;
+const  sources   = new Map();
 
 /**
  * source(1)
  *
  * @description                Connects ignis to a data-source.
+ * @param          {name}      Name of the data source.
  * @param          {callback}  Callback function, which returns an object
  *                             representing the data connection; or a promise
  *                             that resolves with one.
  * @param          {args}      Arguments to pass to the callback.
  * @returns        {promise}   Promise that resolves if successful.
  */
-export default function source(callback, ...args) {
+export default function source(name, callback, ...args) {
+
+  /* If callback is not specified, retrieve the source. */
+  if (typeof callback !== 'function') {
+    let result = sources.get(name);
+    if (!result) { throw new Error(`Data source not found: ${name}`); }
+    return result;
+  }
+
+  /* Otherwise, create the data source */
   return Bluebird.try(() => {
-    if (connection) { throw new Error('Data connection already exists.'); }
-    debug('No data connection found, connecting..');
+    if (sources.get(name)) { throw new Error(`Data source exists: ${name}`); }
+    debug(`Data source '${name}' not found; connecting...`);
     return callback(...args);
   })
   .then((source) => {
-    debug('Data connection successful.');
-    connection = source;
+    debug(`Connection to '${name}' successful.`);
+    sources.set(name, source);
     return source;
   });
+
 }
 
-/**
- * source.connection(0)
- *
- * @returns        {object}    The data connection object.
- */
-source.connection = function() { return connection; };
 
 /**
- * source.disconnect(0)
+ * source.clear(0)
  *
- * @description                Clears the data connection.
+ * @description                Clears all data connections.
  */
-source.disconnect = function() { connection = null; };
+source.clear = function() { sources.clear(); };

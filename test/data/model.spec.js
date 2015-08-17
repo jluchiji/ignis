@@ -24,14 +24,14 @@ describe('model(2)', function() {
     var sourceCb = function() { return source; };
 
     Model.clear();
-    DataSource.disconnect();
-    DataSource(sourceCb).then(function() { done(); });
+    DataSource.clear();
+    DataSource('test-data', sourceCb).then(function() { done(); });
   });
 
   it('should create a model with the data connection', function() {
     var source = this.source;
 
-    Model('test', function(data) {
+    Model('test', 'test-data', function(data) {
       expect(data).to.equal(source);
       return { get: data.test };
     });
@@ -48,7 +48,7 @@ describe('model(2)', function() {
   it('should attach the model to the model store', function() {
     var source = this.source;
 
-    Model('test', function(data) { return { get: data.test }; });
+    Model('test', 'test-data', function(data) { return { get: data.test }; });
 
     var model = Model('test');
     expect(model).to.have.property('get');
@@ -58,7 +58,7 @@ describe('model(2)', function() {
   it('should proxy calls to the data source', function() {
     var source = this.source;
 
-    Model('test', function(data) {
+    Model('test', 'test-data', function(data) {
       expect(data).to.equal(source);
       return { get: data.test };
     });
@@ -72,6 +72,12 @@ describe('model(2)', function() {
     expect(function() {
       Model('no-such-model');
     }).to.throw('Model not found: no-such-model');
+  });
+
+  it('should throw if requested data source is not found', function() {
+    expect(function() {
+      Model('test', 'no-such-source', function(data) { return null; });
+    }).to.throw('Data source not found: no-such-source');
   });
 
 });
