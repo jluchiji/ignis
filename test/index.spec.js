@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-describe('data', function() {
+describe('Data Source Handling', function() {
   require('./data/source.spec.js');
   require('./data/model.spec.js');
 });

@@ -68,4 +68,10 @@ describe('model(2)', function() {
     expect(source.test.calledWith('foo')).to.equal(true);
   });
 
+  it('should throw if requested model is not found', function() {
+    expect(function() {
+      Model('no-such-model');
+    }).to.throw('Model not found: no-such-model');
+  });
+
 });

@@ -1,5 +1,5 @@
 /**
- * model/model.js
+ * data/model.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
@@ -32,7 +32,11 @@ var    store     = new Map();
 export default function model(name, callback) {
 
   /* Get the model with the specified name if callback is not specified. */
-  if (typeof callback !== 'function') { return store.get(name); }
+  if (typeof callback !== 'function') {
+    let result = store.get(name);
+    if (!result) { throw new Error(`Model not found: ${name}`); }
+    return result;
+  }
 
   /* Otherwise, create a new model. */
   let source = DataSource.connection();
