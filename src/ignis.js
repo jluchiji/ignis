@@ -9,6 +9,6 @@ import DataSource   from './data/source';
 import DataModel    from './data/model';
 
 export default {
-  source: DataSource,
+  data:   DataSource,
   model:  DataModel
 };
