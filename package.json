@@ -38,7 +38,9 @@
     "bluebird": "^2.9.34",
     "cache-manager": "^1.0.0",
     "debug": "^2.2.0",
-    "lodash": "^3.10.1"
+    "express": "^4.13.3",
+    "lodash": "^3.10.1",
+    "yamljs": "^0.2.3"
   },
   "jshintConfig": {
     "esnext": true,
