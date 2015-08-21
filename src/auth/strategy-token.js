@@ -5,9 +5,10 @@
  * @license MIT
  */
 
- import Bluebird    from 'bluebird';
- import Passport    from 'passport';
- import * as JWT    from 'passport-jwt';
+import _           from 'lodash';
+import Bluebird    from 'bluebird';
+import Passport    from 'passport';
+import * as JWT    from 'passport-jwt';
 
 
 /**
@@ -17,7 +18,7 @@
  * @param          {options}   [Optional] Passport.js strategy options.
  * @param          {callback}  Function that verifies the login.
  */
-export default function token(callback) {
+export function token(callback) {
   let options  = Object.create(null);
   if (arguments.length === 2) {
     options  = arguments[0];
@@ -31,4 +32,12 @@ export default function token(callback) {
   };
 
   Passport.use(new JWT.Strategy(options, wrapper));
+}
+
+
+/*!
+ * Extension
+ */
+export default function localAuth(ignis) {
+  ignis.auth = _.assign(ignis.auth || { }, { token: token });
 }

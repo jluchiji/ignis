@@ -9,8 +9,8 @@ var Sinon          = require('sinon');
 var Chai           = require('chai');
 var Bluebird       = require('bluebird');
 
-var DataSource     = require('../../lib/data/source');
-var Model          = require('../../lib/data/model');
+var DataSource     = require('../../lib/data/source').source;
+var Model          = require('../../lib/data/model').model;
 
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;

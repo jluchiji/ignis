@@ -5,6 +5,7 @@
  * @license MIT
  */
 
+import _           from 'lodash';
 import Bluebird    from 'bluebird';
 import Passport    from 'passport';
 import * as Local  from 'passport-local';
@@ -17,7 +18,7 @@ import * as Local  from 'passport-local';
  * @param          {options}   [Optional] Passport.js strategy options.
  * @param          {callback}  Function that verifies the login.
  */
-export default function local(callback) {
+export function local(callback) {
   let options  = Object.create(null);
   if (arguments.length === 2) {
     options  = arguments[0];
@@ -31,4 +32,12 @@ export default function local(callback) {
   };
 
   Passport.use(new Local.Strategy(options, wrapper));
+}
+
+
+/*!
+ * Extension
+ */
+export default function localAuth(ignis) {
+  ignis.auth = _.assign(ignis.auth || { }, { local: local });
 }

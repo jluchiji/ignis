@@ -15,14 +15,6 @@ const Ignis = Object.create(null); export default Ignis;
 
 
 /*!
- * Ignis root functions.
- */
-Ignis.Error        = require('./error');
-Ignis.model        = require('./data/model');
-Ignis.source       = require('./data/source');
-
-
-/*!
  * Setup a set to track active extensions.
  */
 Ignis[exts] = new Set();
@@ -37,9 +29,25 @@ Ignis[exts] = new Set();
  * @returns        {Ignis}     Ignis class for further chaining.
  */
 Ignis.use = function(fn) {
+  if (typeof fn === 'object' && typeof fn.default === 'function') {
+    fn = fn.default;
+  }
   if (!Ignis[exts].has(fn)) {
     Ignis[exts].add(fn);
     fn(Ignis);
   }
   return Ignis;
 };
+
+
+/*!
+ * Ignis root functions.
+ */
+Ignis.use(require('./error'));
+Ignis.use(require('./data/model'));
+Ignis.use(require('./data/source'));
+
+
+/* Passport.js authentication strategies */
+Ignis.use(require('./auth/strategy-local'));
+Ignis.use(require('./auth/strategy-token'));

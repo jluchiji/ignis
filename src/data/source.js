@@ -24,7 +24,7 @@ const  sources   = new Map();
  * @param          {args}      Arguments to pass to the callback.
  * @returns        {promise}   Promise that resolves if successful.
  */
-export default function source(name, callback, ...args) {
+export function source(name, callback, ...args) {
 
   /* If callback is not specified, retrieve the source. */
   if (typeof callback !== 'function') {
@@ -54,3 +54,12 @@ export default function source(name, callback, ...args) {
  * @description                Clears all data connections.
  */
 source.clear = function() { sources.clear(); };
+
+
+
+/*!
+ * Extension
+ */
+export default function dataSource(ignis) {
+  ignis.source = source;
+}

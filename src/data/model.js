@@ -8,7 +8,7 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
-import DataSource  from './source';
+import { source as Source }  from './source';
 
 /*!
  * Debug logger.
@@ -30,7 +30,7 @@ var    store     = new Map();
  * @param          {callback}  (optional) Callback that returns a model object.
  * @returns        {model}     Resulting model object.
  */
-export default function model(name, source, callback) {
+export function model(name, source, callback) {
 
   /* Get the model with the specified name if callback is not specified. */
   if (typeof callback !== 'function') {
@@ -40,7 +40,7 @@ export default function model(name, source, callback) {
   }
 
   /* Otherwise, create a new model. */
-  let src = DataSource(source);
+  let src = Source(source);
   if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
   store.set(name, callback(src));
 }
@@ -52,3 +52,11 @@ export default function model(name, source, callback) {
  * @description                Deletes all stored models.
  */
 model.clear = function() { store.clear(); };
+
+
+/*!
+ * Extension
+ */
+export default function dataModel(ignis) {
+  ignis.model = model;
+}

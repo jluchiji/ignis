@@ -13,7 +13,7 @@ import _           from 'lodash';
  * @description    Error arising within Ignis.js that should be reported back
  *                 to the client via an HTTP response.
  */
-export default class IgnisError extends Error {
+export class IgnisError extends Error {
 
   constructor(status, message, details) {
     super(message);
@@ -71,4 +71,12 @@ export default class IgnisError extends Error {
     throw new IgnisError(404, message, details);
   }
 
+}
+
+
+/*!
+ * Extension
+ */
+export default function ignisError(ignis) {
+  ignis.Error = IgnisError;
 }

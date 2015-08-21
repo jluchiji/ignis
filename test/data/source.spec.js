@@ -8,7 +8,7 @@
 var Sinon          = require('sinon');
 var Chai           = require('chai');
 var Bluebird       = require('bluebird');
-var DataSource     = require('../../lib/data/source');
+var DataSource     = require('../../lib/data/source').source;
 
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
@@ -69,7 +69,7 @@ describe('source(1)', function() {
       expect(promise2).to.be.rejectedWith('Data source exists: test');
     });
   });
-    
+
   it('should correctly pass parameters to the callback', function() {
 
     var fake = { foo: 'bar' };
