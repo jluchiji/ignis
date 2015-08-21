@@ -5,26 +5,41 @@
  * @license MIT
  */
 
-import FS           from 'fs';
-import YAML         from 'yamljs';
-
-import DataSource   from './data/source';
-import DataModel    from './data/model';
+import { exts }    from './symbols';
 
 
 /*!
- * Patch require() to handle .yml/.yaml files.
+ * Ignis root namespace object.
  */
-require.extensions['.yml'] = function(module, filename) {
-  return YAML.parse(FS.readFileSync(filename, 'utf8'));
-};
-require.extensions['.yaml'] = require.extensions['.yml'];
+const Ignis = Object.create(null); export default Ignis;
 
 
 /*!
- * Export the root Ignis.js object.
+ * Ignis root functions.
  */
-export default {
-  data:   DataSource,
-  model:  DataModel
+Ignis.Error        = require('./error');
+Ignis.model        = require('./data/model');
+Ignis.source       = require('./data/source');
+
+
+/*!
+ * Setup a set to track active extensions.
+ */
+Ignis[exts] = new Set();
+
+
+/**
+ * use(1)
+ *
+ * @access         public
+ * @description    Make Ignis use the extension.
+ * @param          {fn}        Function exported by the extension module.
+ * @returns        {Ignis}     Ignis class for further chaining.
+ */
+Ignis.use = function(fn) {
+  if (!Ignis[exts].has(fn)) {
+    Ignis[exts].add(fn);
+    fn(Ignis);
+  }
+  return Ignis;
 };

@@ -29,3 +29,7 @@ node_modules
 
 # Build source files
 lib
+
+# Private test files
+*.test.*
+*.private.*
