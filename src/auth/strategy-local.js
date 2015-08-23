@@ -18,7 +18,7 @@ import * as Local  from 'passport-local';
  * @param          {options}   [Optional] Passport.js strategy options.
  * @param          {callback}  Function that verifies the login.
  */
-export function local(callback) {
+export default function local(callback) {
   let options  = Object.create(null);
   if (arguments.length === 2) {
     options  = arguments[0];
@@ -32,12 +32,4 @@ export function local(callback) {
   };
 
   Passport.use(new Local.Strategy(options, wrapper));
-}
-
-
-/*!
- * Extension
- */
-export default function localAuth(ignis) {
-  ignis.auth = _.assign(ignis.auth || { }, { local: local });
 }

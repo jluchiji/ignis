@@ -15,6 +15,13 @@ const Ignis = Object.create(null); export default Ignis;
 
 
 /*!
+ * Ignis application middleware hooks / factories.
+ */
+Ignis.middleware = [ ];  // These are directly attached to the root router
+Ignis.factories  = [ ];  // These are instantiated for every mount operation
+
+
+/*!
  * Setup a set to track active extensions.
  */
 Ignis[exts] = new Set();
@@ -49,5 +56,4 @@ Ignis.use(require('./data/source'));
 
 
 /* Passport.js authentication strategies */
-Ignis.use(require('./auth/strategy-local'));
-Ignis.use(require('./auth/strategy-token'));
+Ignis.use(require('./auth'));

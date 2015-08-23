@@ -18,7 +18,7 @@ import * as JWT    from 'passport-jwt';
  * @param          {options}   [Optional] Passport.js strategy options.
  * @param          {callback}  Function that verifies the login.
  */
-export function token(callback) {
+export default function token(callback) {
   let options  = Object.create(null);
   if (arguments.length === 2) {
     options  = arguments[0];
@@ -32,12 +32,4 @@ export function token(callback) {
   };
 
   Passport.use(new JWT.Strategy(options, wrapper));
-}
-
-
-/*!
- * Extension
- */
-export default function localAuth(ignis) {
-  ignis.auth = _.assign(ignis.auth || { }, { token: token });
 }
