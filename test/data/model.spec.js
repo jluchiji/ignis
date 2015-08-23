@@ -84,4 +84,13 @@ describe('model(2)', function() {
     }).to.throw('Model already exists: test');
 
   });
+
+  it('should mount the model function to the specified namespace', function() {
+    var extension = require('../../lib/data/model').default;
+    var namespace = Object.create(null);
+
+    extension(namespace);
+    expect(namespace.model).to.be.a('function').and.equal(Model);
+  });
+
 });

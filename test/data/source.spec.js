@@ -83,4 +83,12 @@ describe('source(1)', function() {
 
   });
 
+  it('should mount the source function to the specified namespace', function() {
+    var extension = require('../../lib/data/source').default;
+    var namespace = Object.create(null);
+
+    extension(namespace);
+    expect(namespace.source).to.be.a('function').and.equal(DataSource);
+  });
+
 });
