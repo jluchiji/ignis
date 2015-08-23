@@ -7,20 +7,30 @@
 
 import _           from 'lodash';
 import Passport    from 'passport';
-import { local }   from './strategy-local';
-import { token }   from './strategy-token';
+import * as JWT    from 'passport-jwt';
+import * as Local  from 'passport-local';
+
+import Strategy    from './strategy';
+
 
 
 /**
- * factory(1)
+ * instance(2)
  *
  * @description                Authentication middleware factory.
  * @param          {ignis}     Ignis.js namespace.
- * @param          {strategy}  Name of the strategy to apply.
- * @param          {options}   Options to pass to the middleware.
+ * @param          {options}   Strategy name or an options object.
  * @returns        {Function}  Express.js middleware instance.
  */
-export function instance(ignis, strategy, options) {
+export function instance(ignis, options) {
+  let strategy = options;
+  if (typeof options === 'object') {
+    strategy = options.strategy;
+    delete options.strategy;
+  } else {
+    options = { };
+  }
+
   /* Resolve aliases first */
   strategy = ignis.auth.__alias[strategy] || strategy;
 
@@ -47,7 +57,7 @@ export default function auth(ignis) {
   ignis.middleware.push(Passport.initialize());
 
   /* Authentication mechanisms */
-  ignis.auth.local = local;
-  ignis.auth.jwt   = token;
+  ignis.auth.jwt   = Strategy(JWT.Strategy);
+  ignis.auth.local = Strategy(Local.Strategy);
 
 }

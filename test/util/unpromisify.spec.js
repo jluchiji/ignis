@@ -1,5 +1,5 @@
 /**
- * test/data/model.spec.js
+ * test/util/unpromisify.spec.js
  *
  * @author  Denis-Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
