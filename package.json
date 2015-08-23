@@ -6,6 +6,9 @@
   "directories": {
     "doc": "docs"
   },
+  "engines": {
+    "node": "^0.12.7"
+  },
   "scripts": {
     "test": "./node_modules/.bin/gulp test",
     "postinstall": "./node_modules/.bin/gulp build"
