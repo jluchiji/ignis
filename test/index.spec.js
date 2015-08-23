@@ -9,3 +9,7 @@ describe('Data Source Handling', function() {
   require('./data/source.spec.js');
   require('./data/model.spec.js');
 });
+
+describe('Utility Functions', function() {
+  require('./util/unpromisify.spec.js');
+});
