@@ -5,13 +5,14 @@
  * @license MIT
  */
 
+import Monologue   from 'monologue.js';
 import { exts }    from './symbols';
 
 
 /*!
  * Ignis root namespace object.
  */
-const Ignis = Object.create(null); export default Ignis;
+const Ignis = new Monologue(); export default Ignis;
 
 
 /*!

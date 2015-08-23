@@ -40,10 +40,10 @@
     "debug": "^2.2.0",
     "express": "^4.13.3",
     "lodash": "^3.10.1",
+    "monologue.js": "^0.3.3",
     "passport": "^0.3.0",
     "passport-jwt": "^1.1.1",
-    "passport-local": "^1.0.0",
-    "yamljs": "^0.2.3"
+    "passport-local": "^1.0.0"
   },
   "jshintConfig": {
     "esnext": true,
