@@ -68,7 +68,7 @@ gulp.task('coverage', function(done) {
       .pipe(istanbul.writeReports({
         dir: 'coverage',
         reportOpts: { dir: 'coverage' },
-        reporters: ['text-summary', 'html']
+        reporters: ['text-summary', 'html', 'lcov']
       }))
       .on('end', done);
   });
