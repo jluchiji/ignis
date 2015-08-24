@@ -17,6 +17,10 @@ describe('Authentication', function() {
   require('./auth/strategy.spec.js');
 });
 
+describe('Access Control', function() {
+  require('./access/scope.spec.js');
+});
+
 describe('Configuration', function() {
   require('./config/index.spec.js');
   require('./config/envar.spec.js');
