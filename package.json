@@ -50,34 +50,6 @@
     "passport-jwt": "^1.1.1",
     "passport-local": "^1.0.0"
   },
-  "jshintConfig": {
-    "esnext": true,
-    "curly": true,
-    "eqeqeq": true,
-    "freeze": true,
-    "funcscope": true,
-    "undef": true,
-    "predef": [
-      "__dirname",
-      "require",
-      "process",
-      "exports",
-      "module",
-      "console",
-      "setTimeout",
-      "clearTimeout",
-      "describe",
-      "it",
-      "before",
-      "after",
-      "beforeEach",
-      "afterEach"
-    ]
-  },
-  "jscsConfig": {
-    "esnext": true,
-    "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties"
-  },
   "babel": {
     "auxiliaryCommentBefore": "istanbul ignore next"
   }

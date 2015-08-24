@@ -5,6 +5,7 @@
  * @license MIT
  */
 
+var fs             = require('fs');
 var gulp           = require('gulp');
 var jscs           = require('gulp-jscs');
 var babel          = require('gulp-babel');
@@ -34,9 +35,12 @@ gulp.task('build', ['lint'], function() {
  */
 gulp.task('lint', function() {
 
+  var jshintConfig = JSON.parse(fs.readFileSync('.jshintrc', 'utf8'));
+  var jscsConfig   = JSON.parse(fs.readFileSync('.jscsrc',   'utf8'));
+
   return gulp.src(['src/**/*.{js,es6}'])
-    .pipe(jshint(config.jshintConfig))
-    .pipe(jscs(config.jscsConfig))
+    .pipe(jshint(jshintConfig))
+    .pipe(jscs(jscsConfig))
     .on('error', function() { })
     .pipe(stylish.combineWithHintResults())
     .pipe(jshint.reporter('jshint-stylish'))
