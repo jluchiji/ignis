@@ -8,6 +8,10 @@
 var sourcemap = require.resolve('source-map-support');
 if (sourcemap) { require(sourcemap).install(); }
 
+describe('Ignis Core', function() {
+  require('./ignis.spec.js');
+});
+
 describe('Authentication', function() {
   require('./auth/index.spec.js');
   require('./auth/strategy.spec.js');

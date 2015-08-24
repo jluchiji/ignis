@@ -2,7 +2,7 @@
   "name": "ignis",
   "version": "0.1.0",
   "description": "Rapidly create modular API servers.",
-  "main": "lib/ignis.js",
+  "main": "lib/index.js",
   "directories": {
     "doc": "docs"
   },
