@@ -124,4 +124,11 @@ describe('model(2)', function() {
     expect(namespace.emit.calledWith('model.test.foo')).to.equal(true);
   });
 
+  it('should allow construction of models in \'constructor style\'', function() {
+    Model('test', 'test-data', function() {
+      this.foo = 'bar';
+    });
+    expect(Model('test')).to.have.property('foo', 'bar');
+  });
+
 });

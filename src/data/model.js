@@ -45,7 +45,9 @@ export function model(name, source, callback) {
   if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
 
   /* Setup internal wiring for models when called on a namespace. */
-  let result = callback(src);
+  let that   = Object.create(null);
+  let result = callback.call(that, src);
+  result = result || that;
   if (this && typeof this.emit === 'function') {
     result[namespace] = this;
     result.emit = function(event, args) {
