@@ -117,7 +117,7 @@ describe('factory(2)', function() {
 
 describe('callback(3)', function() {
 
-  beforeEach(function() { this.callback = Sinon.spy(console.log); });
+  beforeEach(function() { this.callback = Sinon.spy(); });
 
   it('should return a callback function', function() {
     var cb = extension.passportCallback(null, null, this.callback);
