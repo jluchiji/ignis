@@ -8,7 +8,6 @@
 import Bluebird    from 'bluebird';
 import Authorized  from 'authorized';
 
-import { scopes }  from '../util/symbols';
 import Unpromisify from '../util/unpromisify';
 
 

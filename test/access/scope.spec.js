@@ -8,13 +8,11 @@
 var Sinon          = require('sinon');
 var Chai           = require('chai');
 var Bluebird       = require('bluebird');
-var Passport       = require('passport');
 var Authorized     = require('authorized');
 
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
-var scopes         = require('../../lib/util/symbols').scopes;
 var extension      = require('../../lib/access/scope');
 
 describe('getScope(1)', function() {
