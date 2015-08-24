@@ -80,7 +80,7 @@ describe('factory(2)', function() {
   });
 
   it('should instantiate the appropriate middleware', function() {
-    var mw = extension.passportFactory(this.ns, 'local');
+    var mw = extension.passportFactory(this.ns, { auth: 'local' });
     mw();
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
@@ -88,7 +88,7 @@ describe('factory(2)', function() {
   });
 
   it('should resolve aliases', function() {
-    var mw = extension.passportFactory(this.ns, 'token');
+    var mw = extension.passportFactory(this.ns, { auth: 'token' });
     mw();
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
@@ -96,7 +96,7 @@ describe('factory(2)', function() {
   });
 
   it('should handle options', function() {
-    var mw = extension.passportFactory(this.ns, { strategy: 'token' });
+    var mw = extension.passportFactory(this.ns, { auth: { strategy: 'token' } });
     mw();
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
@@ -104,12 +104,12 @@ describe('factory(2)', function() {
   });
 
   it('should return null when no strategy is specified', function() {
-    var mw = extension.passportFactory(this.ns);
+    var mw = extension.passportFactory(this.ns, { });
     expect(mw).to.equal(null);
   });
 
   it('should return null when strategy is \'none\'', function() {
-    var mw = extension.passportFactory(this.ns, 'noNe');
+    var mw = extension.passportFactory(this.ns, { auth: 'noNe' });
     expect(mw).to.equal(null);
   });
 

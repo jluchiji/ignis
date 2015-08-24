@@ -20,10 +20,11 @@ import { IgnisError } from '../error';
  *
  * @description                Authentication middleware factory.
  * @param          {ignis}     Ignis.js namespace.
- * @param          {options}   Strategy name or an options object.
+ * @param          {handler}   Ignis.js request handler with metadata.
  * @returns        {Function}  Express.js middleware instance.
  */
-export function passportFactory(ignis, options) {
+export function passportFactory(ignis, handler) {
+  let options  = handler.auth || handler.authenticate || handler.authentication;
   let strategy = options;
   if (typeof options === 'object') {
     strategy = options.strategy;
