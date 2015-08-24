@@ -10,6 +10,11 @@ describe('Authentication', function() {
   require('./auth/strategy.spec.js');
 });
 
+describe('Configuration', function() {
+  require('./config/index.spec.js');
+  require('./config/envar.spec.js');
+});
+
 describe('Data Source Handling', function() {
   require('./data/source.spec.js');
   require('./data/model.spec.js');

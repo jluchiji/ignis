@@ -83,11 +83,12 @@ Ignis.use = function(fn) {
 };
 Ignis.use.__extensions = new Set();
 
-
 /*!
  * Ignis root functions.
  */
 Ignis.use(require('./error'));
+Ignis.use(require('./config'));
+Ignis.use(require('./config/envar'));
 Ignis.use(require('./data/model'));
 Ignis.use(require('./data/source'));
 
