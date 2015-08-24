@@ -50,10 +50,8 @@ export function source(name, callback, ...args) {
       return source;
     });
 
-  /* If namespace is present, add the promise to the namespace.waitFor */
-  if (this && _.isArray(this.waitFor)) {
-    this.waitFor.push(promise);
-  }
+  /* If namespace is present, wait for it to resolve before starting. */
+  if (this && typeof this.wait === 'function') { this.wait(promise); }
 
   return promise;
 }

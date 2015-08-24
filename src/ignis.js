@@ -5,6 +5,7 @@
  * @license MIT
  */
 
+import Bluebird    from 'bluebird';
 import Monologue   from 'monologue.js';
 import { exts }    from './util/symbols';
 
@@ -22,23 +23,51 @@ Ignis.middleware = [ ];  // These are directly attached to the root router
 Ignis.factories  = [ ];  // These are instantiated for every mount operation
 
 
-/*!
- * Promises to wait on before starting to listen.
+/**
+ * waitFor(1)
+ *
+ * @access         public
+ * @description                Makes Ignis wait for the promise before starting.
+ * @param          {promise}   Promise to wait for.
+ * @returns        {Ignis}     Ignis instance for further chaining.
  */
-Ignis.waitFor    = [ ];
+Ignis.wait = function(promise) {
+  this.wait.__promises.push(promise);
+  return this;
+};
+Ignis.wait.__promises = [ ];
 
 
-/*!
- * Setup a set to track active extensions.
+/**
+ * ready(1)
+ *
+ * @access         public
+ * @description                Calls the callback when all promises are clear.
+ * @param          {callback}  Callback function.
+ * @returns        {Ignis}     Ignis instance for further chaining.
  */
-Ignis[exts] = new Set();
+Ignis.ready = function(callback) {
+  Bluebird
+    .all(this.wait.__promises)
+    .then(() => {
+      this.emit('started');
+      callback(this);
+    })
+    .catch((error) => {
+      this.emit('error', error);
+      throw error;
+    })
+    .done();
+
+  return this;
+};
 
 
 /**
  * use(1)
  *
  * @access         public
- * @description    Make Ignis use the extension.
+ * @description                Make Ignis use the extension.
  * @param          {fn}        Function exported by the extension module.
  * @returns        {Ignis}     Ignis class for further chaining.
  */
@@ -46,12 +75,13 @@ Ignis.use = function(fn) {
   if (typeof fn === 'object' && typeof fn.default === 'function') {
     fn = fn.default;
   }
-  if (!Ignis[exts].has(fn)) {
-    Ignis[exts].add(fn);
-    fn(Ignis);
+  if (!this.use.__extensions.has(fn)) {
+    this.use.__extensions.add(fn);
+    fn(this);
   }
-  return Ignis;
+  return this;
 };
+Ignis.use.__extensions = new Set();
 
 
 /*!

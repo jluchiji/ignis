@@ -19,12 +19,6 @@ if (!_symbol || /dev/i.test(process.env.NODE_ENV)) {
 
 
 /*!
- * Tracks active extensions.
- */
-export const exts = _symbol('exts');
-
-
-/*!
  * Accesses the namespace of an entity.
  */
 export const namespace = _symbol('namespace');

@@ -92,11 +92,11 @@ describe('source(1)', function() {
   });
 
   it('should correctly add promise to a namespace', function() {
-    var namespace = { waitFor: [], source: DataSource };
+    var namespace = { wait: Sinon.spy(), source: DataSource };
 
     var promise = namespace.source('test', function() { return { a: 'b' }; });
-    expect(namespace.waitFor.length).to.equal(1);
-    expect(namespace.waitFor[0]).to.be.an.instanceOf(Bluebird).and.equal(promise);
+    expect(namespace.wait.calledOnce).to.equal(true);
+    expect(namespace.wait.calledWith(promise)).to.equal(true);
   });
 
   it('should reject if callback returns a falsy value', function() {
