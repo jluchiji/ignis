@@ -93,4 +93,35 @@ describe('model(2)', function() {
     expect(namespace.model).to.be.a('function').and.equal(Model);
   });
 
+  it('should recognize a namespace', function() {
+    var namespace = {
+      emit:  Sinon.spy(),
+      model: Model
+    };
+
+    namespace.model('test', 'test-data', function(data) {
+      return { foo: function() { this.emit('foo'); } };
+    });
+
+    var model = namespace.model('test');
+    expect(model).to.be.an('object');
+    expect(model.emit).to.be.a('function');
+  });
+
+  it('should emit events via the namespace', function() {
+    var namespace = {
+      emit:  Sinon.spy(),
+      model: Model
+    };
+
+    namespace.model('test', 'test-data', function(data) {
+      return { foo: function() { this.emit('foo'); } };
+    });
+
+    var model = namespace.model('test');
+    model.foo();
+    expect(namespace.emit.calledOnce).to.equal(true);
+    expect(namespace.emit.calledWith('model.test.foo')).to.equal(true);
+  });
+
 });

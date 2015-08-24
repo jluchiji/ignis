@@ -1,5 +1,5 @@
 /**
- * symbols.js
+ * util/symbols.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
@@ -12,6 +12,7 @@
  *   2) In development mode for easier object inspection.
  */
 let _symbol = Symbol;
+/* istanbul ignore next */
 if (!_symbol || /dev/i.test(process.env.NODE_ENV)) {
   _symbol = function(name) { return `@@${name}`; };
 }
@@ -21,3 +22,9 @@ if (!_symbol || /dev/i.test(process.env.NODE_ENV)) {
  * Tracks active extensions.
  */
 export const exts = _symbol('exts');
+
+
+/*!
+ * Accesses the namespace of an entity.
+ */
+export const namespace = _symbol('namespace');

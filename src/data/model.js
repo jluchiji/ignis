@@ -8,6 +8,7 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
+import { namespace }         from '../util/symbols';
 import { source as Source }  from './source';
 
 /*!
@@ -42,7 +43,18 @@ export function model(name, source, callback) {
   /* Otherwise, create a new model. */
   let src = Source(source);
   if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
-  store.set(name, callback(src));
+
+  /* Setup internal wiring for models when called on a namespace. */
+  let result = callback(src);
+  if (this && typeof this.emit === 'function') {
+    result[namespace] = this;
+    result.emit = function(event, args) {
+      result[namespace].emit(`model.${name}.${event}`, args);
+    };
+  }
+
+  /* Save the model for later use. */
+  store.set(name, result);
 }
 
 

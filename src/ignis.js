@@ -6,7 +6,7 @@
  */
 
 import Monologue   from 'monologue.js';
-import { exts }    from './symbols';
+import { exts }    from './util/symbols';
 
 
 /*!
