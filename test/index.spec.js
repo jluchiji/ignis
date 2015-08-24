@@ -28,5 +28,6 @@ describe('Data Source Handling', function() {
 });
 
 describe('Utility Functions', function() {
+  require('./util/expressify.spec.js');
   require('./util/unpromisify.spec.js');
 });
