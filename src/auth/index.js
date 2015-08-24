@@ -15,14 +15,14 @@ import Strategy    from './strategy';
 
 
 /**
- * instance(2)
+ * passportFactory(2)
  *
  * @description                Authentication middleware factory.
  * @param          {ignis}     Ignis.js namespace.
  * @param          {options}   Strategy name or an options object.
  * @returns        {Function}  Express.js middleware instance.
  */
-export function instance(ignis, options) {
+export function passportFactory(ignis, options) {
   let strategy = options;
   if (typeof options === 'object') {
     strategy = options.strategy;
@@ -53,7 +53,7 @@ export default function auth(ignis) {
   ignis.auth.__options = { session: false };
 
   /* Attach passport.js middlewares */
-  ignis.factories.push(instance);
+  ignis.factories.push(passportFactory);
   ignis.middleware.push(Passport.initialize());
 
   /* Authentication mechanisms */

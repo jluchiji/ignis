@@ -78,21 +78,21 @@ describe('instance(2)', function() {
   });
 
   it('should instantiate the appropriate middleware', function() {
-    var mw = extension.instance(this.ns, 'local');
+    var mw = extension.passportFactory(this.ns, 'local');
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
     expect(Passport.authenticate.calledWith('local')).to.equal(true);
   });
 
   it('should resolve aliases', function() {
-    var mw = extension.instance(this.ns, 'token');
+    var mw = extension.passportFactory(this.ns, 'token');
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
     expect(Passport.authenticate.calledWith('jwt')).to.equal(true);
   });
 
   it('should handle options', function() {
-    var mw = extension.instance(this.ns, { strategy: 'token' });
+    var mw = extension.passportFactory(this.ns, { strategy: 'token' });
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
     expect(Passport.authenticate.calledWith('jwt')).to.equal(true);
