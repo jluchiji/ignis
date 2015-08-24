@@ -91,4 +91,19 @@ describe('source(1)', function() {
     expect(namespace.source).to.be.a('function').and.equal(DataSource);
   });
 
+  it('should correctly add promise to a namespace', function() {
+    var namespace = { waitFor: [], source: DataSource };
+
+    var promise = namespace.source('test', function() { return { a: 'b' }; });
+    expect(namespace.waitFor.length).to.equal(1);
+    expect(namespace.waitFor[0]).to.be.an.instanceOf(Bluebird).and.equal(promise);
+  });
+
+  it('should reject if callback returns a falsy value', function() {
+
+    var promise = DataSource('test', function() { return null; });
+    expect(promise).to.be.rejectedWith('Data source callback returned falsy value.');
+
+  });
+
 });

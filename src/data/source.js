@@ -5,6 +5,7 @@
  * @license MIT
  */
 
+import _           from 'lodash';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
 
@@ -34,17 +35,27 @@ export function source(name, callback, ...args) {
   }
 
   /* Otherwise, create the data source */
-  return Bluebird.try(() => {
-    if (sources.get(name)) { throw new Error(`Data source exists: ${name}`); }
-    debug(`Data source '${name}' not found; connecting...`);
-    return callback(...args);
-  })
-  .then((source) => {
-    debug(`Connection to '${name}' successful.`);
-    sources.set(name, source);
-    return source;
-  });
+  let promise =
+    Bluebird.try(() => {
+      if (sources.get(name)) { throw new Error(`Data source exists: ${name}`); }
+      debug(`Data source '${name}' not found; connecting...`);
+      return callback(...args);
+    })
+    .then((source) => {
+      debug(`Connection to '${name}' successful.`);
+      if (!source) {
+        throw new Error('Data source callback returned falsy value.');
+      }
+      sources.set(name, source);
+      return source;
+    });
 
+  /* If namespace is present, add the promise to the namespace.waitFor */
+  if (this && _.isArray(this.waitFor)) {
+    this.waitFor.push(promise);
+  }
+
+  return promise;
 }
 
 

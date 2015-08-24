@@ -23,6 +23,12 @@ Ignis.factories  = [ ];  // These are instantiated for every mount operation
 
 
 /*!
+ * Promises to wait on before starting to listen.
+ */
+Ignis.waitFor    = [ ];
+
+
+/*!
  * Setup a set to track active extensions.
  */
 Ignis[exts] = new Set();
