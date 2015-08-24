@@ -31,6 +31,9 @@ export function passportFactory(ignis, options) {
     options = { };
   }
 
+  /* Generate nothing if strategy is 'none' or falsy */
+  if (!strategy || /^none$/i.test(strategy)) { return null; }
+
   /* Resolve aliases first */
   strategy = ignis.auth.__alias[strategy] || strategy;
 

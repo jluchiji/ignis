@@ -98,4 +98,14 @@ describe('instance(2)', function() {
     expect(Passport.authenticate.calledWith('jwt')).to.equal(true);
   });
 
+  it('should return null when no strategy is specified', function() {
+    var mw = extension.passportFactory(this.ns);
+    expect(mw).to.equal(null);
+  });
+
+  it('should return null when strategy is \'none\'', function() {
+    var mw = extension.passportFactory(this.ns, 'noNe');
+    expect(mw).to.equal(null);
+  });
+
 });
