@@ -54,7 +54,7 @@ describe('extension', function() {
 
 });
 
-describe('instance(2)', function() {
+describe('factory(2)', function() {
 
   before(function() {
     Passport.__use = Passport.use;
@@ -74,11 +74,14 @@ describe('instance(2)', function() {
     extension.default(this.ns);
 
     Passport.use = Sinon.spy();
-    Passport.authenticate = Sinon.spy();
+    Passport.authenticate = Sinon.spy(function() {
+      return function() { };
+    });
   });
 
   it('should instantiate the appropriate middleware', function() {
     var mw = extension.passportFactory(this.ns, 'local');
+    mw();
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
     expect(Passport.authenticate.calledWith('local')).to.equal(true);
@@ -86,6 +89,7 @@ describe('instance(2)', function() {
 
   it('should resolve aliases', function() {
     var mw = extension.passportFactory(this.ns, 'token');
+    mw();
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
     expect(Passport.authenticate.calledWith('jwt')).to.equal(true);
@@ -93,6 +97,7 @@ describe('instance(2)', function() {
 
   it('should handle options', function() {
     var mw = extension.passportFactory(this.ns, { strategy: 'token' });
+    mw();
 
     expect(Passport.authenticate.calledOnce).to.equal(true);
     expect(Passport.authenticate.calledWith('jwt')).to.equal(true);
@@ -106,6 +111,43 @@ describe('instance(2)', function() {
   it('should return null when strategy is \'none\'', function() {
     var mw = extension.passportFactory(this.ns, 'noNe');
     expect(mw).to.equal(null);
+  });
+
+});
+
+describe('callback(3)', function() {
+
+  beforeEach(function() { this.callback = Sinon.spy(console.log); });
+
+  it('should return a callback function', function() {
+    var cb = extension.passportCallback(null, null, this.callback);
+    expect(cb).to.be.a('function');
+  });
+
+  it('should not generate errors when successful', function() {
+    var cb = extension.passportCallback(null, null, this.callback);
+
+    cb(null, Object.create(null), null);
+    expect(this.callback.calledOnce).to.equal(true);
+    expect(this.callback.calledWithExactly()).to.equal(true);
+  });
+
+  it('should correctly pass on errors', function() {
+    var cb = extension.passportCallback(null, null, this.callback);
+
+    cb('foobar', Object.create(null), null);
+    expect(this.callback.calledOnce).to.equal(true);
+    expect(this.callback.calledWith('foobar')).to.equal(true);
+  });
+
+  it('should correctly generate Authentication Failed errors', function() {
+    var cb = extension.passportCallback(null, null, this.callback);
+
+    cb(null, null, 'foobar');
+    expect(this.callback.calledOnce).to.equal(true);
+    expect(this.callback.args[0][0])
+      .to.be.an.instanceOf(Error).and
+      .have.deep.property('details.reason', 'foobar');
   });
 
 });

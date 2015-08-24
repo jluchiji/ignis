@@ -10,7 +10,8 @@ import Passport    from 'passport';
 import * as JWT    from 'passport-jwt';
 import * as Local  from 'passport-local';
 
-import Strategy    from './strategy';
+import Strategy       from './strategy';
+import { IgnisError } from '../error';
 
 
 
@@ -39,7 +40,38 @@ export function passportFactory(ignis, options) {
 
   /* Create the corresponding middleware */
   options = _.merge({ }, ignis.auth.__options, options);
-  return Passport.authenticate(strategy, options);
+  return function(req, res, next) {
+    let callback = passportCallback(req, res, next);
+    Passport.authenticate(strategy, options, callback)(req, res, next);
+  };
+}
+
+
+/**
+ * passportCallback(3)
+ *
+ * @description                Creates a custom callback function so that
+ *                             authentication errors go through Express.js
+ *                             error handler stack instead of having Passport.js
+ *                             send out a 401 response.
+ * @param          {err}       Error occured during authentication.
+ * @param          {user}      User information (if authentication successful).
+ * @param          {info}      Additional information.
+ */
+export function passportCallback(req, res, next) {
+  return function(err, user, info) {
+    if (err) { return next(err); }
+
+    if (!user) {
+      let error = new IgnisError(401, 'Authentication Failed', {
+        sensitive: true,
+        reason: info
+      });
+      return next(error);
+    }
+
+    next();
+  };
 }
 
 

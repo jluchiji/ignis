@@ -5,6 +5,9 @@
  * @license MIT
  */
 
+var sourcemap = require.resolve('source-map-support');
+if (sourcemap) { require(sourcemap).install(); }
+
 describe('Authentication', function() {
   require('./auth/index.spec.js');
   require('./auth/strategy.spec.js');
