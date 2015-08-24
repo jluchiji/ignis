@@ -22,9 +22,14 @@ describe('Configuration', function() {
   require('./config/envar.spec.js');
 });
 
-describe('Data Source Handling', function() {
+describe('Data Handling', function() {
   require('./data/source.spec.js');
   require('./data/model.spec.js');
+});
+
+describe('Routing', function() {
+  require('./routing/index.spec.js');
+  require('./routing/mount.spec.js');
 });
 
 describe('Utility Functions', function() {
