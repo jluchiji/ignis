@@ -5,7 +5,6 @@
  * @license MIT
  */
 
-import Chalk       from 'chalk';
 
 /**
  * env(1)
