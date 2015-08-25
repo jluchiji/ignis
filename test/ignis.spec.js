@@ -4,6 +4,7 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+/* jshint -W030 */
 
 var Sinon          = require('sinon');
 var Chai           = require('chai');
@@ -91,6 +92,44 @@ describe('Ignis Class', function() {
       ignis.use(callback);
 
       expect(callback.default.calledOnce).to.equal(true);
+    });
+
+  });
+
+  describe('listen(1)', function() {
+
+    before(function() { ignis._root = ignis.root; });
+    after(function() { ignis.root = ignis._root; });
+
+    beforeEach(function() {
+      ignis.root = {
+        listen: Sinon.spy(function(port, cb) {
+          if (port === 1111) { cb(new Error('fail')); }
+          process.nextTick(cb);
+        })
+      };
+    });
+
+    it('should start listening for connections', function() {
+      process.env.PORT = 9999;
+      return ignis.listen(123).then(function() {
+        expect(ignis.root.listen).to.be.calledOnce;
+        expect(ignis.root.listen).to.be.calledWith(123);
+      });
+    });
+
+    it('should use PORT envar when no port is specified', function() {
+      process.env.PORT = 9999;
+      return ignis.listen().then(function() {
+        expect(ignis.root.listen).to.be.calledOnce;
+        expect(ignis.root.listen).to.be.calledWith(9999);
+      });
+    });
+
+    it('should correctly capture errors', function() {
+      process.env.PORT = 9999;
+      var promise = ignis.listen(1111);
+      expect(promise).to.be.rejectedWith('fail');
     });
 
   });

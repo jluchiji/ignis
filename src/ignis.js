@@ -29,7 +29,7 @@ export class Ignis extends Monologue {
     this.extensions = new Set();
 
     /* Root express router */
-    this.root       = Express.Router();
+    this.root       = Express();
   }
 
   /**
@@ -59,8 +59,25 @@ export class Ignis extends Monologue {
       .all(this.startup)
       .then(() => {
         this.emit('started');
-        callback(this);
+        return callback.call(this, this.root);
       });
+  }
+
+
+  /**
+   * listen(1)
+   *
+   * @description                Creates an Express.js application, mounts the
+   *                             root router and listens for connections on the
+   *                             specified port.
+   * @param          {port}      [Optional] Port to listen on (default: PORT)
+   * @returns        {promise}   Rejects when an error occurs.
+   */
+  listen(port) {
+    if (typeof port !== 'number') { port = Number(process.env.PORT); }
+    return Bluebird.fromNode((done) => {
+      this.root.listen(port, done);
+    });
   }
 
 
