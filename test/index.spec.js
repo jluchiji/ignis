@@ -24,7 +24,7 @@ describe('Authentication', function() {
 });
 
 describe('Access Control', function() {
-  //require('./access/index.spec.js');
+  require('./access/index.spec.js');
   require('./access/role.spec.js');
   require('./access/action.spec.js');
   require('./access/scope.spec.js');

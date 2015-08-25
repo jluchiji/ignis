@@ -1,3 +1,10 @@
+/**
+ * test/access/action.spec.js
+ *
+ * @author  Denis Luchkin-Zhou <denis@ricepo.com>
+ * @license MIT
+ */
+
 var Sinon          = require('sinon');
 var Chai           = require('chai');
 var Bluebird       = require('bluebird');
