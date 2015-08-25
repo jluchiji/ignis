@@ -11,8 +11,6 @@ import Bluebird    from 'bluebird';
 
 const  debug     = Debug('ignis:model');
 
-// Database connection
-const  sources   = new Map();
 
 /**
  * source(1)
@@ -26,10 +24,11 @@ const  sources   = new Map();
  * @returns        {promise}   Promise that resolves if successful.
  */
 export function source(name, callback, ...args) {
+  let store = this.__sources;
 
   /* If callback is not specified, retrieve the source. */
   if (typeof callback !== 'function') {
-    let result = sources.get(name);
+    let result = store.get(name);
     if (!result) { throw new Error(`Data source not found: ${name}`); }
     return result;
   }
@@ -37,7 +36,7 @@ export function source(name, callback, ...args) {
   /* Otherwise, create the data source */
   let promise =
     Bluebird.try(() => {
-      if (sources.get(name)) { throw new Error(`Data source exists: ${name}`); }
+      if (store.get(name)) { throw new Error(`Data source exists: ${name}`); }
       debug(`Data source '${name}' not found; connecting...`);
       return callback(...args);
     })
@@ -46,29 +45,21 @@ export function source(name, callback, ...args) {
       if (!source) {
         throw new Error('Data source callback returned falsy value.');
       }
-      sources.set(name, source);
+      store.set(name, source);
       return source;
     });
 
-  /* If namespace is present, wait for it to resolve before starting. */
-  if (this && typeof this.wait === 'function') { this.wait(promise); }
+  /* Wait for it to resolve before starting. */
+  this.wait(promise);
 
   return promise;
 }
-
-
-/**
- * source.clear(0)
- *
- * @description                Clears all data connections.
- */
-source.clear = function() { sources.clear(); };
-
 
 
 /*!
  * Extension
  */
 export default function dataSource(ignis) {
+  Object.defineProperty(ignis, '__sources', { value: new Map() });
   ignis.source = source;
 }

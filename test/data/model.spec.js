@@ -4,13 +4,13 @@
  * @author  Denis-Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+/* jshint -W030 */
 
 var Sinon          = require('sinon');
 var Chai           = require('chai');
 var Bluebird       = require('bluebird');
 
-var DataSource     = require('../../lib/data/source').source;
-var Model          = require('../../lib/data/model').model;
+var Model          = require('../../lib/data/model');
 
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
@@ -19,116 +19,93 @@ var expect         = Chai.expect;
 
 describe('model(2)', function() {
 
-  beforeEach(function(done) {
-    var source = this.source = { test: Sinon.spy() };
-    var sourceCb = function() { return source; };
-
-    Model.clear();
-    DataSource.clear();
-    DataSource('test-data', sourceCb).then(function() { done(); });
+  beforeEach(function() {
+    this.source = { test: Sinon.spy() };
+    this.ns = {
+      __models: new Map(),
+      emit:     Sinon.spy(),
+      model:    Model.model,
+      source:   Sinon.spy(function() { return this.source; }.bind(this))
+    };
   });
 
   it('should create a model with the data connection', function() {
-    var source = this.source;
-
-    Model('test', 'test-data', function(data) {
-      expect(data).to.equal(source);
+    this.ns.model('test', 'test-data', function(data) {
+      expect(data).to.equal(this.source);
       return { get: data.test };
-    });
-
+    }.bind(this));
   });
 
   it('should attach the model to the model store', function() {
-    var source = this.source;
+    this.ns.model('test', 'test-data', function(data) {
+      return { get: data.test };
+    });
 
-    Model('test', 'test-data', function(data) { return { get: data.test }; });
-
-    var model = Model('test');
+    var model = this.ns.model('test');
     expect(model).to.have.property('get');
     expect(model.get).to.be.a('function');
   });
 
   it('should proxy calls to the data source', function() {
-    var source = this.source;
-
-    Model('test', 'test-data', function(data) {
-      expect(data).to.equal(source);
+    this.ns.model('test', 'test-data', function(data) {
+      expect(data).to.equal(this.source);
       return { get: data.test };
-    });
+    }.bind(this));
 
-    var model = Model('test');
+    var model = this.ns.model('test');
     model.get('foo');
-    expect(source.test.calledWith('foo')).to.equal(true);
+    expect(this.source.test).to.be.calledOnce.and.to.be.calledWith('foo');
   });
 
   it('should throw if requested model is not found', function() {
     expect(function() {
-      Model('no-such-model');
-    }).to.throw('Model not found: no-such-model');
-  });
-
-  it('should throw if requested data source is not found', function() {
-    expect(function() {
-      Model('test', 'no-such-source', function(data) { return null; });
-    }).to.throw('Data source not found: no-such-source');
+      this.ns.model('no-such-model');
+    }.bind(this)).to.throw('Model not found: no-such-model');
   });
 
   it('should throw when attempting to create a duplicate model', function() {
-    var source = this.source;
+    var model1 = Object.create(null);
+    var model2 = Object.create(null);
 
-    Model('test', 'test-data', function() { return source; });
-    expect(Model('test')).to.equal(source);
+    this.ns.model('test', 'test-data', function() { return model1; });
+    expect(this.ns.model('test')).to.equal(model1);
 
     expect(function() {
-      Model('test', 'test-data', function() { return source; });
-    }).to.throw('Model already exists: test');
+      this.ns.model('test', 'test-data', function() { return model2; });
+    }.bind(this)).to.throw('Model already exists: test');
 
   });
 
-  it('should mount the model function to the specified namespace', function() {
-    var extension = require('../../lib/data/model').default;
-    var namespace = Object.create(null);
+  it('should emit events via Ignis object', function() {
 
-    extension(namespace);
-    expect(namespace.model).to.be.a('function').and.equal(Model);
-  });
-
-  it('should recognize a namespace', function() {
-    var namespace = {
-      emit:  Sinon.spy(),
-      model: Model
-    };
-
-    namespace.model('test', 'test-data', function(data) {
+    this.ns.model('test', 'test-data', function(data) {
       return { foo: function() { this.emit('foo'); } };
     });
 
-    var model = namespace.model('test');
-    expect(model).to.be.an('object');
-    expect(model.emit).to.be.a('function');
-  });
-
-  it('should emit events via the namespace', function() {
-    var namespace = {
-      emit:  Sinon.spy(),
-      model: Model
-    };
-
-    namespace.model('test', 'test-data', function(data) {
-      return { foo: function() { this.emit('foo'); } };
-    });
-
-    var model = namespace.model('test');
+    var model = this.ns.model('test');
     model.foo();
-    expect(namespace.emit.calledOnce).to.equal(true);
-    expect(namespace.emit.calledWith('model.test.foo')).to.equal(true);
+    expect(this.ns.emit)
+      .to.be.calledOnce.and
+      .to.be.calledWith('model.test.foo');
   });
 
   it('should allow construction of models in \'constructor style\'', function() {
-    Model('test', 'test-data', function() {
+    this.ns.model('test', 'test-data', function() {
       this.foo = 'bar';
     });
-    expect(Model('test')).to.have.property('foo', 'bar');
+    expect(this.ns.model('test')).to.have.property('foo', 'bar');
+  });
+
+});
+
+describe('extension', function() {
+
+  it('should mount the extension', function() {
+    var ns = Object.create(null);
+    Model.default(ns);
+
+    expect(ns.__models).to.be.an.instanceOf(Map);
+    expect(ns.model).to.be.a('function').and.to.equal(Model.model);
   });
 
 });

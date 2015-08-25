@@ -9,17 +9,11 @@ import _           from 'lodash';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
 import { namespace }         from '../util/symbols';
-import { source as Source }  from './source';
 
 /*!
  * Debug logger.
  */
 const  debug     = Debug('ignis:model');
-
-/*!
- * Map for storing model objects.
- */
-var    store     = new Map();
 
 
 /**
@@ -32,6 +26,7 @@ var    store     = new Map();
  * @returns        {model}     Resulting model object.
  */
 export function model(name, source, callback) {
+  let store = this.__models;
 
   /* Get the model with the specified name if callback is not specified. */
   if (typeof callback !== 'function') {
@@ -41,36 +36,26 @@ export function model(name, source, callback) {
   }
 
   /* Otherwise, create a new model. */
-  let src = Source(source);
+  let src = this.source(source);
   if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
 
   /* Setup internal wiring for models when called on a namespace. */
   let that   = Object.create(null);
   let result = callback.call(that, src);
   result = result || that;
-  if (this && typeof this.emit === 'function') {
-    result[namespace] = this;
-    result.emit = function(event, args) {
-      result[namespace].emit(`model.${name}.${event}`, args);
-    };
-  }
+  result.emit = (event, args) => {
+    this.emit(`model.${name}.${event}`, args);
+  };
 
   /* Save the model for later use. */
   store.set(name, result);
 }
 
 
-/**
- * model.clear(0)
- *
- * @description                Deletes all stored models.
- */
-model.clear = function() { store.clear(); };
-
-
 /*!
  * Extension
  */
 export default function dataModel(ignis) {
+  Object.defineProperty(ignis, '__models', { value: new Map() });
   ignis.model = model;
 }

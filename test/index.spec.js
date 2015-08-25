@@ -36,6 +36,7 @@ describe('Configuration', function() {
 });
 
 describe('Data Handling', function() {
+  require('./data/index.spec.js');
   require('./data/source.spec.js');
   require('./data/model.spec.js');
 });

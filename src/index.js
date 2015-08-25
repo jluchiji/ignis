@@ -6,20 +6,23 @@
  */
 
 import Ignis       from './ignis';
+import Parser      from 'body-parser';
 
+/* Parse JSON bodies before attaching Passport.js */
+Ignis.root.use(Parser.json());
 
 /*!
- * Ignis root functions.
+ * Ignis extension packages.
  */
 Ignis.use(require('./error'));
 Ignis.use(require('./config'));
 Ignis.use(require('./config/envar'));
-Ignis.use(require('./data/model'));
-Ignis.use(require('./data/source'));
-
+Ignis.use(require('./data'));
 
 /* Passport.js authentication strategies */
 Ignis.use(require('./auth'));
 
+/* Authorized access sontrol */
+Ignis.use(require('./access'));
 
 export default Ignis;
