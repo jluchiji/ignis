@@ -4,7 +4,7 @@
  * @author  Denis-Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-
+/* jshint -W030 */
 var Sinon          = require('sinon');
 var Chai           = require('chai');
 var Bluebird       = require('bluebird');
@@ -35,7 +35,7 @@ describe('extension', function() {
 
   it('should mount modules to the specified namespace', function() {
     var namespace = Object.create(null);
-    namespace.middleware = [];
+    namespace.root = { use: Sinon.spy() };
     namespace.factories  = [];
 
     extension.default(namespace);
@@ -44,7 +44,7 @@ describe('extension', function() {
     expect(namespace.auth.__alias).to.be.an('object');
     expect(namespace.auth.__options).to.be.an('object');
 
-    expect(namespace.middleware.length).to.equal(1);
+    expect(namespace.root.use).to.be.calledOnce;
     expect(namespace.factories.length).to.equal(1);
 
     expect(namespace.auth.jwt).to.be.a('function');
@@ -68,7 +68,7 @@ describe('factory(2)', function() {
 
   beforeEach(function() {
     this.ns = {
-      middleware: [],
+      root: { use: Sinon.spy() },
       factories:  [],
     };
     extension.default(this.ns);

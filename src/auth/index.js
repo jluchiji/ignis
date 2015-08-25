@@ -90,7 +90,7 @@ export default function auth(ignis) {
 
   /* Attach passport.js middlewares */
   ignis.factories.push(passportFactory);
-  ignis.middleware.push(Passport.initialize());
+  ignis.root.use(Passport.initialize());
 
   /* Authentication mechanisms */
   ignis.auth.jwt   = Strategy(JWT.Strategy);

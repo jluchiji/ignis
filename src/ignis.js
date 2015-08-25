@@ -23,7 +23,6 @@ export class Ignis extends Monologue {
 
     /* Ignis application middleware management */
     this.factories  = [ ];  // These are instantiated for every endpoint
-    this.middleware = [ ];  // These are attached to the root router
 
     /* Promises to wait on */
     this.startup    = [ ];
