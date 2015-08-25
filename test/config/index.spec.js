@@ -11,10 +11,10 @@ describe('config(2)', function() {
 
   beforeEach(function() {
     this.namespace = {
-      emit:   Sinon.spy(),
-      config: target.config
+      emit:     Sinon.spy(),
+      config:   target.config,
+      __config: new Map()
     };
-    target.config.clear();
   });
 
   it('should get/set the config value', function() {

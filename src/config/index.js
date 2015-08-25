@@ -6,12 +6,6 @@
  */
 
 
-/*!
- * Map to store configuration options
- */
-const store = new Map();
-
-
 /**
  * config(2)
  *
@@ -22,6 +16,7 @@ const store = new Map();
  * @returns                    {this} for set; config value for get.
  */
 export function config(name, value) {
+  let store = this.__config;
   let old = store.get(name);
 
   /* Get config value if available */
@@ -47,19 +42,10 @@ export function config(name, value) {
 }
 
 
-/**
- * config.clear()
- *
- * @description                Deletes all configuration values.
- */
-config.clear = function() {
-  store.clear();
-};
-
-
 /*!
  * Ignis.js extension
  */
 export default function(ignis) {
+  Object.defineProperty(ignis, '__config', { value: new Map() });
   ignis.config = config;
 }

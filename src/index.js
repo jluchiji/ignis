@@ -16,7 +16,6 @@ Ignis.root.use(Parser.json());
  */
 Ignis.use(require('./error'));
 Ignis.use(require('./config'));
-Ignis.use(require('./config/envar'));
 Ignis.use(require('./data'));
 
 /* Passport.js authentication strategies */
