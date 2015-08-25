@@ -46,6 +46,7 @@ describe('Routing', function() {
 });
 
 describe('Utility Functions', function() {
+  require('./util/index.spec.js');
   require('./util/expressify.spec.js');
   require('./util/unpromisify.spec.js');
 });
