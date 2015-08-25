@@ -14,6 +14,7 @@ var sourcemap = require.resolve('source-map-support');
 if (sourcemap) { require(sourcemap).install(); }
 
 describe('Ignis Core', function() {
+  require('./error.spec.js');
   require('./ignis.spec.js');
 });
 
@@ -23,7 +24,9 @@ describe('Authentication', function() {
 });
 
 describe('Access Control', function() {
+  //require('./access/index.spec.js');
   require('./access/role.spec.js');
+  require('./access/action.spec.js');
   require('./access/scope.spec.js');
 });
 
