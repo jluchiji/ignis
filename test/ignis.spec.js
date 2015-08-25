@@ -24,8 +24,8 @@ describe('Ignis Class', function() {
       var promise = Bluebird.resolve();
       ignis.wait(promise);
 
-      expect(ignis.startup.length).to.equal(1);
-      expect(ignis.startup[0]).to.equal(promise);
+      ignis.startup.length.should.equal(1);
+      ignis.startup[0].should.equal(promise);
     });
 
   });

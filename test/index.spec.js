@@ -5,6 +5,11 @@
  * @license MIT
  */
 
+var Chai           = require('chai');
+Chai.use(require('sinon-chai'));
+Chai.use(require('chai-as-promised'));
+Chai.should();
+
 var sourcemap = require.resolve('source-map-support');
 if (sourcemap) { require(sourcemap).install(); }
 
