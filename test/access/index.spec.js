@@ -19,24 +19,36 @@ describe('accessFactory(2)', function() {
 
   before(function() { Authorized._can = Authorized.can; });
   after(function() { Authorized.can = Authorized._can; });
-  beforeEach(function() { Authorized.can = Sinon.spy(); });
+  beforeEach(function() {
+    Authorized.can = Sinon.spy(function() {
+      return function() { };
+    });
+});
 
   it('should create an authorization middleware', function() {
     var mware = extension.accessFactory(null, { access: 'test' });
 
+    expect(mware).to.be.a('function');
     expect(Authorized.can).to.be.calledOnce;
     var args = Authorized.can.firstCall.args;
     expect(args).to.have.members(['test']);
   });
 
   it('should handle an array of actions', function() {
-    var mware = extension.accessFactory(null, { access: ['test', 'foo'] });
+    var mware = extension.accessFactory(null, { action: ['test', 'foo'] });
 
+    expect(mware).to.be.a('function');
     expect(Authorized.can).to.be.calledOnce;
     var args = Authorized.can.firstCall.args;
     expect(args).to.have.members(['test', 'foo']);
   });
 
+  it('should generate null if no actions specified', function() {
+    var mware = extension.accessFactory(null, { });
+
+    expect(Authorized.can.callCount).to.equal(0);
+    expect(mware).to.be.null;
+  });
 });
 
 describe('extension', function() {
