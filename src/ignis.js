@@ -61,9 +61,12 @@ export class Ignis extends Monologue {
    */
   listen(port) {
     if (typeof port !== 'number') { port = Number(process.env.PORT); }
-    return Bluebird.fromNode((done) => {
-      this.root.listen(port, done);
-    });
+    this.wait(i =>
+      Bluebird.fromNode((done) => {
+        this.root.listen(port, done);
+      })
+    );
+    return this.startup;
   }
 
 
