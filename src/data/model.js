@@ -36,19 +36,28 @@ export function model(name, source, callback) {
   }
 
   /* Otherwise, create a new model. */
-  let src = this.source(source);
-  if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
+  this.wait(function() {
+    let src = this.source(source);
+    if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
 
-  /* Setup internal wiring for models when called on a namespace. */
-  let that   = Object.create(null);
-  let result = callback.call(that, src);
-  result = result || that;
-  result.emit = (event, args) => {
-    this.emit(`model.${name}.${event}`, args);
-  };
+    let that   = Object.create(null);
 
-  /* Save the model for later use. */
-  store.set(name, result);
+    return Bluebird
+      .resolve(callback.call(that, src))
+      .then(result => {
+        result = result || that;
+
+        /* Allow models to emit events */
+        result.emit = (event, args) => {
+          this.emit(`model.${name}.${event}`, args);
+        };
+
+        /* Save the model for later use. */
+        store.set(name, result);
+      });
+  });
+
+  return this;
 }
 
 

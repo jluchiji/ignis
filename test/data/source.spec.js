@@ -9,6 +9,8 @@
 var Sinon          = require('sinon');
 var Chai           = require('chai');
 var Bluebird       = require('bluebird');
+
+var Ignis          = require('../../lib/ignis').Ignis;
 var Source         = require('../../lib/data/source');
 
 Chai.use(require('chai-as-promised'));
@@ -19,21 +21,18 @@ var expect         = Chai.expect;
 describe('source(1)', function() {
 
   beforeEach(function() {
-    this.ns = {
-      __sources: new Map(),
-      source:    Source.source,
-      wait:      Sinon.spy()
-    };
+    this.ns = new Ignis();
+    Source.default(this.ns);
   });
 
   it('should connect if sync callback succeeds', function() {
 
     var fake = { test: 0 };
-    var promise = this.ns.source('test', function() { return fake; });
+    var promise = this.ns.source('test', i => fake);
 
-    expect(promise).be.fulfilled.and.eventually.equal(fake).then(function() {
+    expect(this.ns.startup).be.fulfilled.then(i => {
       expect(this.ns.source('test')).to.equal(fake);
-    }.bind(this));
+    });
 
   });
 
@@ -44,9 +43,9 @@ describe('source(1)', function() {
       return Bluebird.resolve(fake);
     });
 
-    expect(promise).be.fulfilled.and.eventually.equal(fake).then(function() {
+    expect(this.ns.startup).be.fulfilled.then(i => {
       expect(this.ns.source('test')).to.equal(fake);
-    }.bind(this));
+    });
 
   });
 
@@ -56,7 +55,7 @@ describe('source(1)', function() {
       throw new Error('Test Error');
     });
 
-    expect(promise).to.be.rejectedWith('Test Error');
+    expect(this.ns.startup).to.be.rejectedWith('Test Error');
   });
 
   it('should reject if async callback fails', function() {
@@ -65,61 +64,43 @@ describe('source(1)', function() {
       return Bluebird.reject(new Error('Test Error'));
     });
 
-    expect(promise).to.be.rejectedWith('Test Error');
+    expect(this.ns.startup).to.be.rejectedWith('Test Error');
   });
 
   it('should reject on attempt to overwrite the connection', function() {
     var fake = { test: 4 };
-    var promise = this.ns.source('test', function() { return fake; });
-    expect(promise).be.fulfilled.and.eventually.equal(fake).then(function() {
-      var promise2 = this.ns.source('test', function() {
-        return { test: 5 };
-      });
-      expect(promise2).to.be.rejectedWith('Data source exists: test');
-    }.bind(this));
+    this.ns.source('test', function() { return fake; });
+    expect(this.ns.startup).be.fulfilled.then(i => {
+      this.ns.source('test', () => { return { test: 5 }; });
+      expect(this.ns.startup).to.be.rejectedWith('Data source exists: test');
+    });
   });
 
   it('should correctly pass parameters to the callback', function() {
 
     var fake = { foo: 'bar' };
-    var promise = this.ns.source('test', function(a, b) {
+    this.ns.source('test', function(a, b) {
       expect(a).to.equal(0);
       expect(b).to.equal(1);
       return fake;
     }, 0, 1);
 
-    expect(promise).to.be.fulfilled.and.eventually.equal(fake);
+    expect(this.ns.startup).to.be.fulfilled;
 
-  });
-
-  it('should correctly add promise to a namespace', function() {
-    var promise = this.ns.source('test', function() { return { a: 'b' }; });
-    expect(this.ns.wait).to.be.calledOnce.and.to.be.calledWith(promise);
   });
 
   it('should reject if callback returns a falsy value', function() {
 
-    var promise = this.ns.source('test', function() { return null; });
-    expect(promise).to.be.rejectedWith('Data source callback returned falsy value.');
+    this.ns.source('test', function() { return null; });
+    expect(this.ns.startup).to.be
+      .rejectedWith('Data source callback returned falsy value.');
 
   });
 
   it('should throw if data source is not found', function() {
-    expect(function() {
+    expect(i => {
       this.ns.source('no-such-source');
-    }.bind(this)).to.throw('Data source not found: no-such-source');
-  });
-
-});
-
-describe('extension', function() {
-
-  it('should mount the extension', function() {
-    var ns = Object.create(null);
-    Source.default(ns);
-
-    expect(ns.__sources).to.be.an.instanceOf(Map);
-    expect(ns.source).to.be.a('function').and.equal(Source.source);
+    }).to.throw('Data source not found: no-such-source');
   });
 
 });

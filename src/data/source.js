@@ -34,25 +34,23 @@ export function source(name, callback, ...args) {
   }
 
   /* Otherwise, create the data source */
-  let promise =
-    Bluebird.try(() => {
-      if (store.get(name)) { throw new Error(`Data source exists: ${name}`); }
-      debug(`Data source '${name}' not found; connecting...`);
-      return callback(...args);
-    })
-    .then((source) => {
-      debug(`Connection to '${name}' successful.`);
-      if (!source) {
-        throw new Error('Data source callback returned falsy value.');
-      }
-      store.set(name, source);
-      return source;
-    });
+  this.wait(function() {
+    if (store.get(name)) { throw new Error(`Data source exists: ${name}`); }
+    debug(`Data source '${name}' not found; connecting...`);
 
-  /* Wait for it to resolve before starting. */
-  this.wait(promise);
+    return Bluebird
+      .resolve(callback(...args))
+      .then((source) => {
+        debug(`Connection to '${name}' successful.`);
+        if (!source) {
+          throw new Error('Data source callback returned falsy value.');
+        }
+        store.set(name, source);
+        return source;
+      });
+  });
 
-  return promise;
+  return this;
 }
 
 
