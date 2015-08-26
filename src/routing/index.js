@@ -5,6 +5,8 @@
  * @license MIT
  */
 
+import { mount }   from './mount';
+
 
 /*!
  * Set to trach already-mounted endpoints.
@@ -26,4 +28,13 @@ export function endpoint(path, fn) {
     mounted.add(fn);
   }
   return this;
+}
+
+
+/*!
+ * Ignis extension.
+ */
+export default function routingExtension(ignis) {
+  ignis.mount    = mount;
+  ignis.endpoint = endpoint;
 }

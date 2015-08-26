@@ -39,3 +39,15 @@ describe('endpoint(2)', function() {
   });
 
 });
+
+describe('extension', function() {
+
+  it('should mount the extension', function() {
+    var ns = Object.create(null);
+    target.default(ns);
+
+    expect(ns.mount).to.be.a('function');
+    expect(ns.endpoint).to.be.a('function');
+  });
+
+});
