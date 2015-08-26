@@ -17,7 +17,7 @@ var sourcemaps     = require('gulp-sourcemaps');
 
 var config         = require('./package.json');
 
-var babel          = require('babel/register');
+var babelc         = require('mocha-babel');
 
 /*!
  * Transpile ES6 source files into ES5.
