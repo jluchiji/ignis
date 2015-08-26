@@ -8,12 +8,6 @@
 import { mount }   from './mount';
 
 
-/*!
- * Set to trach already-mounted endpoints.
- */
-const mounted = new Set();
-
-
 /**
  * endpoint(2)
  *
@@ -23,10 +17,13 @@ const mounted = new Set();
  * @return         {this}      Namespace for further chaining.
  */
 export function endpoint(path, fn) {
-  if (!mounted.has(fn)) {
-    fn(path, this);
-    mounted.add(fn);
-  }
+  this.wait(function() {
+    if (!this.__mounted.has(fn)) {
+      fn(path, this);
+      this.__mounted.add(fn);
+    }
+  });
+
   return this;
 }
 
@@ -35,6 +32,7 @@ export function endpoint(path, fn) {
  * Ignis extension.
  */
 export default function routingExtension(ignis) {
+  Object.defineProperty(ignis, '__mounted', { value: new Set() });
   ignis.mount    = mount;
   ignis.endpoint = endpoint;
 }

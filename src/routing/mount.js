@@ -5,10 +5,15 @@
  * @license MIT
  */
 
+
+
 import _           from 'lodash';
 import Path        from 'path';
+import Debug       from 'debug';
 
 import Expressify  from '../util/expressify';
+
+const  debug = Debug('ignis:mount');
 
 /**
  * mount(2)
@@ -26,6 +31,7 @@ export function mount(path, handler) {
 
   /* Determine where to mount the endpoint */
   url = _.trimRight(Path.join(path, url), '/');
+  debug(`Ignis::mount(): ${verb.toUpperCase()} ${url}`);
 
   /* Generate the middleware stack */
   let middleware = _.chain(this.factories)

@@ -12,12 +12,14 @@ var Bluebird       = require('bluebird');
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
+var Ignis          = require('../../lib/ignis').Ignis;
 var target         = require('../../lib/routing/index');
 
 describe('endpoint(2)', function() {
 
   beforeEach(function() {
-    this.ns = { endpoint: target.endpoint };
+    this.ns = new Ignis();
+    target.default(this.ns);
   });
 
   it('should mount an endpoint', function() {
@@ -25,8 +27,9 @@ describe('endpoint(2)', function() {
     var fn = Sinon.spy();
     this.ns.endpoint('/test', fn);
 
-    expect(fn.calledOnce).to.equal(true);
-    expect(fn.calledWith('/test', this.ns)).to.equal(true);
+    return expect(this.ns.startup).to.be.fulfilled.then(i => {
+      expect(fn).to.be.calledOnce.and.to.be.calledWith('/test', this.ns);
+    })
   });
 
   it('should not mount an endpoint that is already mounted', function() {
@@ -35,7 +38,10 @@ describe('endpoint(2)', function() {
     this.ns.endpoint('/test', fn);
     this.ns.endpoint('/test2', fn);
 
-    expect(fn.calledOnce).to.equal(true);
+    return expect(this.ns.startup).to.be.fulfilled.then(i => {
+      expect(fn).to.be.calledOnce.and.to.be.calledWith('/test');
+    });
+
   });
 
 });

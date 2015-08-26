@@ -69,6 +69,7 @@ export class Ignis extends Monologue {
       Bluebird.fromNode((done) => {
         this.root.listen(port, done);
       })
+      .tap(i => debug('Ignis::listen(): Ignis up and ready'))
     );
     return this.startup;
   }
