@@ -17,6 +17,8 @@ var sourcemaps     = require('gulp-sourcemaps');
 
 var config         = require('./package.json');
 
+var babel          = require('babel/register');
+
 /*!
  * Transpile ES6 source files into ES5.
  */
@@ -54,7 +56,10 @@ gulp.task('lint', function() {
 gulp.task('test', ['lint'], function() {
 
   return gulp.src(['test/index.spec.js'], { read: false })
-    .pipe(mocha({ reporter: 'spec' }));
+    .pipe(mocha({
+      reporter: 'spec',
+      compilers: { js: 'babel' }
+    }));
 
 });
 
@@ -68,7 +73,9 @@ gulp.task('coverage', function(done) {
   .pipe(istanbul.hookRequire())
   .on('finish', function() {
     gulp.src(['test/index.spec.js'])
-      .pipe(mocha())
+      .pipe(mocha({
+        compilers: { js: 'babel' }
+      }))
       .pipe(istanbul.writeReports({
         dir: 'coverage',
         reportOpts: { dir: 'coverage' },

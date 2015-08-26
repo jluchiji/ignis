@@ -19,51 +19,67 @@ describe('Ignis Class', function() {
 
   describe('wait(1)', function() {
 
-    beforeEach(function() { ignis.startup = [ ]; });
-
-    it('should push a promise into the startup sequence', function() {
-      var promise = Bluebird.resolve();
-      ignis.wait(promise);
-
-      ignis.startup.length.should.equal(1);
-      ignis.startup[0].should.equal(promise);
+    beforeEach(() => {
+      ignis.startup = Bluebird.resolve();
     });
 
-  });
+    it('should wait on a promised function', function() {
+      var promise1 = Bluebird.delay(20);
+      var promise2 = Bluebird.delay(30);
 
-  describe('ready(1)', function() {
+      var action1 = Sinon.spy(i => promise1);
+      var action2 = Sinon.spy(i => {
+        expect(promise1.isFulfilled()).to.equal(true);
+        return promise2;
+      });
+      var action3 = Sinon.spy(i => {
+        expect(promise2.isFulfilled()).to.equal(true);
+        return true;
+      });
 
-    beforeEach(function() { ignis.startup = [ ]; });
-
-    it('should wait for all startup promises to resolve', function(done) {
-      var promise = Bluebird.resolve();
-      ignis.ready(function() { done(); });
+      ignis.wait(action1).wait(action2).wait(action3);
+      return expect(ignis.startup).to.be.fulfilled.then(i => {
+        expect(action1).to.be.calledOnce;
+        expect(action2).to.be.calledOnce;
+        expect(action3).to.be.calledOnce;
+        expect(action1).to.be.calledBefore(action2);
+      });
     });
 
-    it('should throw rejected promises as errors', function(done) {
-      var callback = Sinon.spy();
-      var promise  = Bluebird.reject(new Error('test'));
+    it('should wait on a sync functon', function() {
+      var action1 = Sinon.spy(i => 123);
+      var action2 = Sinon.spy(i => 456);
 
-      ignis.wait(promise);
-      var result   = ignis.ready(callback);
-
-      result
-        .then(function() {
-          done(new Error('Callback should not be called!'));
-        })
-        .catch(function() {
-          try {
-            expect(callback.callCount).to.equal(0);
-          } catch (x) {
-            done(x);
-          }
-
-          done();
-        });
-
-
+      ignis.wait(action1).wait(action2);
+      return expect(ignis.startup).to.be.fulfilled.then(i => {
+        expect(action1).to.be.calledOnce;
+        expect(action2).to.be.calledOnce;
+        expect(action1).to.be.calledBefore(action2);
+      });
     });
 
+    it('should wait on a mix of sync and promised functions', function() {
+      var promise = Bluebird.delay(30);
+
+      var action1 = Sinon.spy(i => promise);
+      var action2 = Sinon.spy(i => {
+        expect(promise.isFulfilled()).to.equal(true);
+        return true;
+      });
+
+      ignis.wait(action1).wait(action2);
+      return expect(ignis.startup).to.be.fulfilled.then(i => {
+        expect(action1).to.be.calledOnce;
+        expect(action2).to.be.calledOnce;
+        expect(action1).to.be.calledBefore(action2);
+      });
+    });
+
+    it('should throw when waiting on a non-function', function() {
+      expect(i => {
+        ignis.wait(null);
+      }).to.throw('Cannot wait on non-function objects.');
+    });
   });
 
   describe('use(1)', function() {

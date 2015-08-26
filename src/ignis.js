@@ -22,10 +22,10 @@ export class Ignis extends Monologue {
     this.name       = name || 'ignis-app';
 
     /* Ignis application middleware management */
-    this.factories  = [ ];  // These are instantiated for every endpoint
+    this.factories  = [ ];
 
     /* Promises to wait on */
-    this.startup    = [ ];
+    this.startup    = Bluebird.resolve();
     this.extensions = new Set();
 
     /* Root express router */
@@ -37,30 +37,16 @@ export class Ignis extends Monologue {
    *
    * @access         public
    * @description                Makes Ignis wait for the promise before starting.
-   * @param          {promise}   Promise to wait for.
+   * @param          {action}    Function to call and wait for.
    * @returns        {Ignis}     Ignis instance for further chaining.
    */
-  wait(promise) {
-    this.startup.push(promise);
+  wait(action) {
+    if (typeof action === 'function') {
+      this.startup = this.startup.then(i => action.call(this, this.root));
+    } else {
+      throw new Error('Cannot wait on non-function objects.');
+    }
     return this;
-  }
-
-
-  /**
-   * ready(1)
-   *
-   * @access         public
-   * @description                Calls the callback when all promises are clear.
-   * @param          {callback}  Callback function.
-   * @returns        {promise}   Rejects when an error occurs.
-   */
-  ready(callback) {
-    return Bluebird
-      .all(this.startup)
-      .then(() => {
-        this.emit('started');
-        return callback.call(this, this.root);
-      });
   }
 
 
