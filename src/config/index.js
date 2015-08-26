@@ -5,6 +5,9 @@
  * @license MIT
  */
 
+import Debug       from 'debug';
+
+const debug = Debug('ignis:config');
 
 /**
  * config(2)
@@ -30,6 +33,7 @@ export function config(name, value) {
 
   /* Otherwise, set the config value */
   store.set(name, value);
+  debug(`Ignis::config(): Modified ${name}`);
   this.emit(
     (typeof old === 'undefined') ? 'config.set' : 'config.modified',
     {

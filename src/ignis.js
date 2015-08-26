@@ -5,10 +5,12 @@
  * @license MIT
  */
 
+import Debug       from 'debug';
 import Express     from 'express';
 import Bluebird    from 'bluebird';
 import Monologue   from 'monologue.js';
 
+const debug = Debug('ignis:core');
 
 /**
  * IgnisApp
@@ -41,6 +43,7 @@ export class Ignis extends Monologue {
    * @returns        {Ignis}     Ignis instance for further chaining.
    */
   wait(action) {
+    debug(`Ignis::wait()`);
     if (typeof action === 'function') {
       this.startup = this.startup.then(i => action.call(this, this.root));
     } else {
@@ -60,6 +63,7 @@ export class Ignis extends Monologue {
    * @returns        {promise}   Rejects when an error occurs.
    */
   listen(port) {
+    debug('Ignis::listen()');
     if (typeof port !== 'number') { port = Number(process.env.PORT); }
     this.wait(i =>
       Bluebird.fromNode((done) => {

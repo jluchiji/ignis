@@ -40,6 +40,7 @@ export function model(name, source, callback) {
     let src = this.source(source);
     if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
 
+    debug(`Ignis::model(): Creating ${name}`);
     let that   = Object.create(null);
 
     return Bluebird

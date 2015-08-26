@@ -5,6 +5,8 @@
  * @license MIT
  */
 
+import Debug       from 'debug';
+const  debug = Debug('ignis:envar');
 
 /**
  * env(1)
@@ -19,6 +21,7 @@ export function env(fields) {
     .keys(fields)
     .forEach(key => {
       if (typeof process.env[key] === 'undefined') {
+        debug(`Ignis::config::envar(): Missing ${key}`);
         this.emit('config.missing', { name: key, description: fields[key] });
       } else {
         this.config(`env.${key}`, process.env[key]);

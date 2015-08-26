@@ -36,12 +36,12 @@ export function source(name, callback, ...args) {
   /* Otherwise, create the data source */
   this.wait(function() {
     if (store.get(name)) { throw new Error(`Data source exists: ${name}`); }
-    debug(`Data source '${name}' not found; connecting...`);
+    debug(`Ignis::source(): Connecting to ${name}`);
 
     return Bluebird
       .resolve(callback(...args))
       .then((source) => {
-        debug(`Connection to '${name}' successful.`);
+        debug(`Ignis::source(): Connected to ${name}`);
         if (!source) {
           throw new Error('Data source callback returned falsy value.');
         }

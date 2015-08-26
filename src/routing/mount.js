@@ -41,7 +41,7 @@ export function mount(path, handler) {
   let method = router[verb.toLowerCase()];
 
   if (!method) { throw new Error(`HTTP verb not supported: ${verb}`); }
-  method(url, ...middleware);
+  method.call(router, url, ...middleware);
 
   return this;
 }
