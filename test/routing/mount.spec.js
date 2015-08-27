@@ -17,15 +17,16 @@ var Mount          = require('../../lib/routing/mount');
 describe('mount(2)', function() {
 
   beforeEach(function() {
-    this.handler = {
-      path:  'POST /test/',
-      auth:  'token',
-      status: 201
+    this.meta = {
+      path: 'POST /test/',
+      auth: 'token',
+      status: 201,
+      handler: function() { }
     };
 
     this.ns = {
-      factories: [ Sinon.spy(function(ignis, options) { return options; }) ],
-      mount:  Mount.mount,
+      factories: [ function(ignis, options) { return options.auth; } ],
+      mount:     Mount.mount,
       root: { post: Sinon.spy() }
     };
 
@@ -33,27 +34,27 @@ describe('mount(2)', function() {
 
 
   it('should create and mount a middleware stack', function() {
-    this.ns.mount('/foo/:bar', this.handler);
+    this.ns.mount('/foo/:bar', this.meta);
 
     var router = this.ns.root.post;
-    expect(router.calledOnce).to.equal(true);
-    expect(router.calledWith('/foo/:bar/test', this.handler)).to.equal(true);
+    expect(router).to.be.calledOnce;
+    expect(router).to.be.calledWith('/foo/:bar/test', 'token');
     expect(router.firstCall.args[2]).to.be.a('function');
   });
 
   it('should throw on invalid mount path', function() {
-    this.handler.path = 'POST/test';
+    this.meta.path = 'POST/test';
 
     expect(function() {
-      this.ns.mount('/', this.handler);
+      this.ns.mount('/', this.meta);
     }.bind(this)).to.throw('Invalid mount path: ');
   });
 
   it('should throw on invalid method', function() {
-    this.handler.path = 'DOSOMETHING /test';
+    this.meta.path = 'DOSOMETHING /test';
 
     expect(function() {
-      this.ns.mount('/', this.handler);
+      this.ns.mount('/', this.meta);
     }.bind(this)).to.throw('HTTP verb not supported: ');
   });
 

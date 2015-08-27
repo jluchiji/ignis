@@ -19,11 +19,11 @@ const  debug = Debug('ignis:mount');
  * mount(2)
  *
  * @param          {path}      Root path of the handler to mount.
- * @param          {handler}   Ignis.js request handler with metadata.
+ * @param          {meta}      Ignis.js request handler with metadata.
  * @return         {this}      Namespace for further chaining.
  */
-export function mount(path, handler) {
-  let meta = handler.meta || handler;
+export function mount(path, meta) {
+  let handler = meta.handler;
 
   /* Split out the HTTP verb and URL. */
   let [ verb, url ] = meta.path.split(' ', 2);
