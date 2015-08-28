@@ -27,9 +27,17 @@ var getAll = {
   }
 };
 
+var error = {
+  path: 'GET /error',
+  handler: function(req) {
+    throw new Error('Scream! Run! Panic!');
+  }
+};
+
 module.exports = function(root, ignis) {
 
   ignis.mount(root, getByCode);
   ignis.mount(root, getAll);
+  ignis.mount('/', error);
 
 };
