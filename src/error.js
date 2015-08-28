@@ -77,6 +77,10 @@ export class IgnisError extends Error {
 /*!
  * Extension
  */
-export default function ignisError(ignis) {
-  ignis.Error = IgnisError;
+export default function ignisError(Ignis) {
+  Ignis.prototype.deny     = IgnisError.deny;
+  Ignis.prototype.panic    = IgnisError.panic;
+  Ignis.prototype.notFound = IgnisError.notFound;
+  Ignis.prototype.Error    = IgnisError;
+  Ignis.Error = IgnisError;
 }

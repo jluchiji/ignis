@@ -6,6 +6,7 @@
  */
 
 import _           from 'lodash';
+import Parser      from 'body-parser';
 import Passport    from 'passport';
 import * as JWT    from 'passport-jwt';
 import * as Local  from 'passport-local';
@@ -90,6 +91,7 @@ export default function auth(ignis) {
 
   /* Attach passport.js middlewares */
   ignis.factories.push(passportFactory);
+  ignis.root.use(Parser.json());
   ignis.root.use(Passport.initialize());
 
   /* Authentication mechanisms */

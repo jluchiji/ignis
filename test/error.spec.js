@@ -10,6 +10,7 @@ var Chai           = require('chai');
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
+var Ignis          = require('../lib/core');
 var extension      = require('../lib/error');
 
 
@@ -52,15 +53,18 @@ describe('IgnisError', function() {
     }).to.throw('test');
   });
 
-});
+  describe('extension', function() {
 
-describe('extension', function() {
+    it('should mount the extension', function() {
+      let instance = new Ignis();
+      instance.use(extension);
+      
+      expect(instance).to.have.property('deny', extension.IgnisError.deny);
+      expect(instance).to.have.property('panic', extension.IgnisError.panic);
+      expect(instance).to.have.property('notFound', extension.IgnisError.notFound);
+      expect(Ignis).to.have.property('Error', extension.IgnisError);
+    });
 
-  it('should mount the extension', function() {
-    var ns = Object.create(null);
-    extension.default(ns);
-
-    expect(ns).to.have.property('Error', extension.IgnisError);
   });
 
 });

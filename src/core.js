@@ -1,10 +1,11 @@
 /**
- * ignis.js
+ * core.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
 
+import _           from 'lodash';
 import Debug       from 'debug';
 import Express     from 'express';
 import Bluebird    from 'bluebird';
@@ -17,21 +18,22 @@ const debug = Debug('ignis:core');
  *
  * @description Ignis application class.
  */
-export class Ignis extends Monologue {
+export default class Ignis extends Monologue {
 
-  constructor(name) {
+  constructor() {
     super();
-    this.name       = name || 'ignis-app';
 
     /* Ignis application middleware management */
     this.factories  = [ ];
 
-    /* Promises to wait on */
+    /* Startup sequence root promise */
     this.startup    = Bluebird.resolve();
-    this.extensions = new Set();
 
     /* Root express router */
     this.root       = Express();
+
+    /* Run all initializers on this */
+    Ignis.init.forEach(fn => fn.call(this));
   }
 
   /**
@@ -83,22 +85,36 @@ export class Ignis extends Monologue {
    * @param          {fn}        Function exported by the extension module.
    * @returns        {Ignis}     Ignis class for further chaining.
    */
-  use(fn) {
-    if (typeof fn === 'object' && typeof fn.default === 'function') {
-      fn = fn.default;
-    }
-    if (!this.extensions.has(fn)) {
-      this.extensions.add(fn);
-      fn(this);
-    }
-    return this;
-  }
+  use(fn) { Ignis.use.call(this, fn); }
 
 }
 
 
 /*!
- * Ignis root namespace object.
+ * Initializers: these are called every time an Ignis instance is created.
  */
-const instance = new Ignis();
-export default instance;
+Object.defineProperty(Ignis, 'init', { value: [] });
+
+
+/*!
+ * Extensions: tracks which extensions are already attached to the Ignis.
+ */
+Object.defineProperty(Ignis, '__exts', { value: new Set() });
+
+
+/**
+ * use(1)
+ *
+ * @access         public
+ * @description                Make Ignis use the extension.
+ * @param          {fn}        Function exported by the extension module.
+ * @returns        {Ignis}     Ignis class for further chaining.
+ */
+Ignis.use = function(fn) {
+  /* Handle ES6 modules with multiple exports */
+  if (_.isObject(fn) && _.isFunction(fn.default)) { fn = fn.default; }
+  /* No-op if this extension is already attached */
+  if (Ignis.__exts.has(fn)) { return Ignis; }
+  Ignis.__exts.add(fn);
+  fn.call(this === Ignis ? null : this, Ignis);
+};

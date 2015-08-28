@@ -13,14 +13,14 @@ var Bluebird       = require('bluebird');
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
-var ignis          = require('../lib/ignis').default;
+var Ignis          = require('../lib/core');
 
 describe('Ignis Class', function() {
 
   describe('wait(1)', function() {
 
-    beforeEach(() => {
-      ignis.startup = Bluebird.resolve();
+    beforeEach(function() {
+      this.ignis = new Ignis();
     });
 
     it('should wait on a promised function', function() {
@@ -37,8 +37,8 @@ describe('Ignis Class', function() {
         return true;
       });
 
-      ignis.wait(action1).wait(action2).wait(action3);
-      return expect(ignis.startup).to.be.fulfilled.then(i => {
+      this.ignis.wait(action1).wait(action2).wait(action3);
+      return expect(this.ignis.startup).to.be.fulfilled.then(i => {
         expect(action1).to.be.calledOnce;
         expect(action2).to.be.calledOnce;
         expect(action3).to.be.calledOnce;
@@ -50,8 +50,8 @@ describe('Ignis Class', function() {
       var action1 = Sinon.spy(i => 123);
       var action2 = Sinon.spy(i => 456);
 
-      ignis.wait(action1).wait(action2);
-      return expect(ignis.startup).to.be.fulfilled.then(i => {
+      this.ignis.wait(action1).wait(action2);
+      return expect(this.ignis.startup).to.be.fulfilled.then(i => {
         expect(action1).to.be.calledOnce;
         expect(action2).to.be.calledOnce;
         expect(action1).to.be.calledBefore(action2);
@@ -67,8 +67,8 @@ describe('Ignis Class', function() {
         return true;
       });
 
-      ignis.wait(action1).wait(action2);
-      return expect(ignis.startup).to.be.fulfilled.then(i => {
+      this.ignis.wait(action1).wait(action2);
+      return expect(this.ignis.startup).to.be.fulfilled.then(i => {
         expect(action1).to.be.calledOnce;
         expect(action2).to.be.calledOnce;
         expect(action1).to.be.calledBefore(action2);
@@ -77,48 +77,48 @@ describe('Ignis Class', function() {
 
     it('should throw when waiting on a non-function', function() {
       expect(i => {
-        ignis.wait(null);
+        this.ignis.wait(null);
       }).to.throw('Cannot wait on non-function objects.');
     });
   });
 
   describe('use(1)', function() {
 
+    var callback = Sinon.spy();
+
     it('should push attach the extension', function() {
-
-      var callback = Sinon.spy();
-      ignis.use(callback);
-
-      expect(callback.calledOnce).to.equal(true);
-      expect(callback.calledWith(ignis)).to.equal(true);
+      Ignis.use(callback);
+      expect(callback).to.be.calledOnce.and.calledWith(Ignis);
     });
 
     it('should not attach an extension that is already attached', function() {
-
-      var callback = Sinon.spy();
-      ignis.use(callback);
-      ignis.use(callback);
-
-      expect(callback.calledOnce).to.equal(true);
+      Ignis.use(callback);
+      expect(callback).to.be.calledOnce;
     });
 
     it('should handle ES6 modules required from CommonJS', function() {
+      var extension = { default: Sinon.spy() };
+      Ignis.use(extension);
+      expect(extension.default).to.be.calledOnce;
+    });
 
-      var callback = { default: Sinon.spy() };
-      ignis.use(callback);
+    it('should proxy instance use() to static use()', function() {
+      let extension = Sinon.spy(function(Ignis) {
+        expect(this).not.to.be.null;
+        expect(Ignis).to.equal(Ignis);
+      });
 
-      expect(callback.default.calledOnce).to.equal(true);
+      let ignis = new Ignis();
+      ignis.use(extension);
     });
 
   });
 
   describe('listen(1)', function() {
 
-    before(function() { ignis._root = ignis.root; });
-    after(function() { ignis.root = ignis._root; });
-
     beforeEach(function() {
-      ignis.root = {
+      this.ignis = new Ignis();
+      this.ignis.root = {
         listen: Sinon.spy(function(port, cb) {
           if (port === 1111) { cb(new Error('fail')); }
           process.nextTick(cb);
@@ -128,23 +128,23 @@ describe('Ignis Class', function() {
 
     it('should start listening for connections', function() {
       process.env.PORT = 9999;
-      return ignis.listen(123).then(function() {
-        expect(ignis.root.listen).to.be.calledOnce;
-        expect(ignis.root.listen).to.be.calledWith(123);
+      return this.ignis.listen(123).then(() => {
+        expect(this.ignis.root.listen).to.be.calledOnce;
+        expect(this.ignis.root.listen).to.be.calledWith(123);
       });
     });
 
     it('should use PORT envar when no port is specified', function() {
       process.env.PORT = 9999;
-      return ignis.listen().then(function() {
-        expect(ignis.root.listen).to.be.calledOnce;
-        expect(ignis.root.listen).to.be.calledWith(9999);
+      return this.ignis.listen().then(() => {
+        expect(this.ignis.root.listen).to.be.calledOnce;
+        expect(this.ignis.root.listen).to.be.calledWith(9999);
       });
     });
 
     it('should correctly capture errors', function() {
       process.env.PORT = 9999;
-      var promise = ignis.listen(1111);
+      var promise = this.ignis.listen(1111);
       expect(promise).to.be.rejectedWith('fail');
     });
 

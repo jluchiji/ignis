@@ -6,6 +6,7 @@
  */
 
 import Debug       from 'debug';
+import Envar       from './envar';
 
 const debug = Debug('ignis:config');
 
@@ -47,9 +48,18 @@ export function config(name, value) {
 
 
 /*!
+ * Initializer
+ */
+export function init() {
+  Object.defineProperty(this, '__config', { value: new Map() });
+  this.config = config;
+  this.config.env = Envar.bind(this);
+}
+
+/*!
  * Ignis.js extension
  */
-export default function(ignis) {
-  Object.defineProperty(ignis, '__config', { value: new Map() });
-  ignis.config = config;
+export default function(Ignis) {
+  Ignis.init.push(init);
+  if (this) { init.call(this); }
 }

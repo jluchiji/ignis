@@ -16,7 +16,7 @@ const  debug = Debug('ignis:envar');
  * @param          {fields}    Object whose keys are envar names, and values
  *                             are string descriptions of the parameter.
  */
-export function env(fields) {
+export default function env(fields) {
   Object
     .keys(fields)
     .forEach(key => {
@@ -27,11 +27,4 @@ export function env(fields) {
         this.config(`env.${key}`, process.env[key]);
       }
     });
-}
-
-/*!
- * Ignis.js extension.
- */
-export default function envar(ignis) {
-  ignis.config.env = env.bind(ignis);
 }

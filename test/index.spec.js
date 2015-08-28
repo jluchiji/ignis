@@ -14,16 +14,16 @@ var sourcemap = require.resolve('source-map-support');
 if (sourcemap) { require(sourcemap).install(); }
 
 describe('Ignis Core', function() {
+  require('./core.spec.js');
   require('./error.spec.js');
-  require('./ignis.spec.js');
 });
 
-describe('Authentication', function() {
+describe.skip('Authentication', function() {
   require('./auth/index.spec.js');
   require('./auth/strategy.spec.js');
 });
 
-describe('Access Control', function() {
+describe.skip('Access Control', function() {
   require('./access/index.spec.js');
   require('./access/role.spec.js');
   require('./access/action.spec.js');
@@ -35,13 +35,13 @@ describe('Configuration', function() {
   require('./config/envar.spec.js');
 });
 
-describe('Data Handling', function() {
+describe.skip('Data Handling', function() {
   require('./data/index.spec.js');
   require('./data/source.spec.js');
   require('./data/model.spec.js');
 });
 
-describe('Routing', function() {
+describe.skip('Routing', function() {
   require('./routing/index.spec.js');
   require('./routing/error.spec.js');
   require('./routing/mount.spec.js');

@@ -5,11 +5,7 @@
  * @license MIT
  */
 
-import Ignis       from './ignis';
-import Parser      from 'body-parser';
-
-/* Parse JSON bodies before attaching Passport.js */
-Ignis.root.use(Parser.json());
+import Ignis       from './core';
 
 /*!
  * Ignis extension packages.
@@ -25,4 +21,5 @@ Ignis.use(require('./auth'));
 /* Authorized access sontrol */
 Ignis.use(require('./access'));
 
-export default Ignis;
+const  instance = new Ignis();
+export default instance;
