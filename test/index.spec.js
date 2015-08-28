@@ -43,6 +43,7 @@ describe('Data Handling', function() {
 
 describe('Routing', function() {
   require('./routing/index.spec.js');
+  require('./routing/error.spec.js');
   require('./routing/mount.spec.js');
 });
 

@@ -6,7 +6,7 @@
  */
 
 import { mount }   from './mount';
-
+import { error }   from './error';
 
 /**
  * endpoint(2)
@@ -34,5 +34,6 @@ export function endpoint(path, fn) {
 export default function routingExtension(ignis) {
   Object.defineProperty(ignis, '__mounted', { value: new Set() });
   ignis.mount    = mount;
+  ignis.error    = error;
   ignis.endpoint = endpoint;
 }
