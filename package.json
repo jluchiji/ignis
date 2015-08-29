@@ -52,7 +52,7 @@
     "cache-manager": "^1.0.0",
     "debug": "^2.2.0",
     "express": "^4.13.3",
-    "ignis-util": "^0.1.0",
+    "ignis-util": "^0.1.1",
     "lodash": "^3.10.1",
     "monologue.js": "^0.3.3",
     "parent-require": "^1.0.0",
