@@ -29,6 +29,14 @@ export function endpoint(path, fn) {
 
 
 /*!
+ * Initializer.
+ */
+export function init() {
+  Object.defineProperty(this, '__mounted', { value: new Set() });
+}
+
+
+/*!
  * Ignis extension.
  */
 export default function routingExtension(ignis) {

@@ -60,6 +60,5 @@ export function init() {
  * Ignis.js extension
  */
 export default function(Ignis) {
-  Ignis.init.push(init);
-  if (this) { init.call(this); }
+  Ignis.init(init);
 }

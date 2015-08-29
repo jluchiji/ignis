@@ -19,6 +19,12 @@ if (!_symbol || /dev/i.test(process.env.NODE_ENV)) {
 
 
 /*!
- * Accesses the namespace of an entity.
+ * Applied initializers.
  */
-export const namespace = _symbol('namespace');
+export const init = _symbol('Ignis::init');
+
+
+/*!
+ * Applied extensions.
+ */
+export const exts = _symbol('Ignis::exts');

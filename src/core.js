@@ -11,6 +11,8 @@ import Express     from 'express';
 import Bluebird    from 'bluebird';
 import Monologue   from 'monologue.js';
 
+import { init, exts } from './util/symbols';
+
 const debug = Debug('ignis:core');
 
 /**
@@ -23,6 +25,9 @@ export default class Ignis extends Monologue {
   constructor() {
     super();
 
+    /* Set to keep track of applied initializers */
+    this[init]      = new Set();
+
     /* Ignis application middleware management */
     this.factories  = [ ];
 
@@ -32,9 +37,24 @@ export default class Ignis extends Monologue {
     /* Root express router */
     this.root       = Express();
 
-    /* Run all initializers on this */
-    Ignis.init.forEach(fn => fn.call(this));
+    this.init();
   }
+
+
+  /**
+   * init(0)
+   *
+   * @description              Runs all initializers that have not been run on
+   *                           this Ignis instance.
+   */
+  init() {
+    Ignis[init].forEach(fn => {
+      if (this[init].has(fn)) { return; }
+      this[init].add(fn);
+      fn.call(this);
+    });
+  }
+
 
   /**
    * wait(1)
@@ -93,13 +113,25 @@ export default class Ignis extends Monologue {
 /*!
  * Initializers: these are called every time an Ignis instance is created.
  */
-Object.defineProperty(Ignis, 'init', { value: [] });
+Ignis[init] = [ ];
 
 
 /*!
  * Extensions: tracks which extensions are already attached to the Ignis.
  */
-Object.defineProperty(Ignis, '__exts', { value: new Set() });
+Ignis[exts] = new Set();
+
+
+/**
+ * init(1)
+ *
+ * @description                Pushes the initializer callback into the Ignis
+ *                             initializer stack.
+ * @param          {fn}        Initializer function to push.
+ */
+Ignis.init = function(fn) {
+  Ignis[init].push(fn);
+};
 
 
 /**
@@ -114,7 +146,8 @@ Ignis.use = function(fn) {
   /* Handle ES6 modules with multiple exports */
   if (_.isObject(fn) && _.isFunction(fn.default)) { fn = fn.default; }
   /* No-op if this extension is already attached */
-  if (Ignis.__exts.has(fn)) { return Ignis; }
-  Ignis.__exts.add(fn);
-  fn.call(this === Ignis ? null : this, Ignis);
+  if (Ignis[exts].has(fn)) { return Ignis; }
+  Ignis[exts].add(fn);
+  fn(Ignis);
+  if (this !== Ignis) { this.init(); }
 };

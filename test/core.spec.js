@@ -17,6 +17,58 @@ var Ignis          = require('../lib/core');
 
 describe('Ignis Class', function() {
 
+  describe('use(1)', function() {
+
+    var callback = Sinon.spy();
+
+    it('should attach the extension', function() {
+      Ignis.use(callback);
+      expect(callback).to.be.calledOnce.and.calledWith(Ignis);
+    });
+
+    it('should not attach an extension that is already attached', function() {
+      Ignis.use(callback);
+      expect(callback).to.be.calledOnce;
+    });
+
+    it('should handle ES6 modules required from CommonJS', function() {
+      var extension = { default: Sinon.spy() };
+      Ignis.use(extension);
+      expect(extension.default).to.be.calledOnce;
+    });
+
+    it('should proxy instance use() to static use()', function() {
+      let extension = Sinon.spy(function(Ignis) {
+        expect(this).not.to.be.null;
+        expect(Ignis).to.equal(Ignis);
+      });
+
+      let ignis = new Ignis();
+      ignis.use(extension);
+    });
+
+  });
+
+  describe('init(0)', function() {
+
+    it('should run every initializer exactly once', function() {
+      let fn0 = Sinon.spy();
+      let fn1 = Sinon.spy();
+
+      Ignis.init(fn0);
+      Ignis.init(fn1);
+
+      let instance = new Ignis();
+      expect(fn0).to.be.calledOnce;
+      expect(fn1).to.be.calledOnce;
+
+      instance.init();
+      expect(fn0).to.be.calledOnce;
+      expect(fn1).to.be.calledOnce;
+    });
+
+  });
+
   describe('wait(1)', function() {
 
     beforeEach(function() {
@@ -80,38 +132,6 @@ describe('Ignis Class', function() {
         this.ignis.wait(null);
       }).to.throw('Cannot wait on non-function objects.');
     });
-  });
-
-  describe('use(1)', function() {
-
-    var callback = Sinon.spy();
-
-    it('should push attach the extension', function() {
-      Ignis.use(callback);
-      expect(callback).to.be.calledOnce.and.calledWith(Ignis);
-    });
-
-    it('should not attach an extension that is already attached', function() {
-      Ignis.use(callback);
-      expect(callback).to.be.calledOnce;
-    });
-
-    it('should handle ES6 modules required from CommonJS', function() {
-      var extension = { default: Sinon.spy() };
-      Ignis.use(extension);
-      expect(extension.default).to.be.calledOnce;
-    });
-
-    it('should proxy instance use() to static use()', function() {
-      let extension = Sinon.spy(function(Ignis) {
-        expect(this).not.to.be.null;
-        expect(Ignis).to.equal(Ignis);
-      });
-
-      let ignis = new Ignis();
-      ignis.use(extension);
-    });
-
   });
 
   describe('listen(1)', function() {
