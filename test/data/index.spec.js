@@ -11,6 +11,7 @@ var Chai           = require('chai');
 var Bluebird       = require('bluebird');
 
 var Data           = require('../../lib/data');
+var Ignis          = require('../../lib/core');
 
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
@@ -18,13 +19,11 @@ var expect         = Chai.expect;
 describe('extension', function() {
 
   it('should mount the extension', function() {
-    var ns = Object.create(null);
-    Data(ns);
+    var ignis = new Ignis();
+    ignis.use(Data);
 
-    expect(ns.__sources).to.be.an.instanceOf(Map);
-    expect(ns.__models).to.be.an.instanceOf(Map);
-    expect(ns.source).to.be.a('function');
-    expect(ns.model).to.be.a('function');
+    expect(ignis.source).to.be.a('function');
+    expect(ignis.model).to.be.a('function');
   });
 
 });

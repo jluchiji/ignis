@@ -35,13 +35,13 @@ describe('Configuration', function() {
   require('./config/envar.spec.js');
 });
 
-describe.skip('Data Handling', function() {
+describe('Data Handling', function() {
   require('./data/index.spec.js');
   require('./data/source.spec.js');
   require('./data/model.spec.js');
 });
 
-describe.skip('Routing', function() {
+describe('Routing', function() {
   require('./routing/index.spec.js');
   require('./routing/error.spec.js');
   require('./routing/mount.spec.js');

@@ -7,8 +7,14 @@
 
 import Debug       from 'debug';
 import Envar       from './envar';
+import Symbol      from '../util/symbols';
 
 const debug = Debug('ignis:config');
+
+/*!
+ * Export symbols used by config(2).
+ */
+const __store = Symbol('Ignis::config::store');
 
 /**
  * config(2)
@@ -20,7 +26,7 @@ const debug = Debug('ignis:config');
  * @returns                    {this} for set; config value for get.
  */
 export function config(name, value) {
-  let store = this.__config;
+  let store = this[__store];
   let old = store.get(name);
 
   /* Get config value if available */
@@ -51,7 +57,7 @@ export function config(name, value) {
  * Initializer
  */
 export function init() {
-  Object.defineProperty(this, '__config', { value: new Map() });
+  this[__store] = new Map();
   this.config = config;
   this.config.env = Envar.bind(this);
 }

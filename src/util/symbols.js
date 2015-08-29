@@ -16,15 +16,4 @@ let _symbol = Symbol;
 if (!_symbol || /dev/i.test(process.env.NODE_ENV)) {
   _symbol = function(name) { return `@@${name}`; };
 }
-
-
-/*!
- * Applied initializers.
- */
-export const init = _symbol('Ignis::init');
-
-
-/*!
- * Applied extensions.
- */
-export const exts = _symbol('Ignis::exts');
+export default _symbol;

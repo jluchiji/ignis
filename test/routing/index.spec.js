@@ -12,48 +12,41 @@ var Bluebird       = require('bluebird');
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
-var Ignis          = require('../../lib/ignis').Ignis;
+var Ignis          = require('../../lib/core');
 var target         = require('../../lib/routing/index');
 
 describe('endpoint(2)', function() {
 
   beforeEach(function() {
-    this.ns = new Ignis();
-    target.default(this.ns);
+    this.ignis = new Ignis();
+  });
+
+  it('should mount the extension', function() {
+    this.ignis.use(target);
+
+    expect(this.ignis.mount).to.be.a('function');
+    expect(this.ignis.endpoint).to.be.a('function');
   });
 
   it('should mount an endpoint', function() {
-
     var fn = Sinon.spy();
-    this.ns.endpoint('/test', fn);
+    this.ignis.endpoint('/test', fn);
 
-    return expect(this.ns.startup).to.be.fulfilled.then(i => {
-      expect(fn).to.be.calledOnce.and.to.be.calledWith('/test', this.ns);
+    return expect(this.ignis.startup).to.be.fulfilled.then(i => {
+      expect(fn).to.be.calledOnce.and.to.be.calledWith('/test', this.ignis);
     })
   });
 
   it('should not mount an endpoint that is already mounted', function() {
 
     var fn = Sinon.spy();
-    this.ns.endpoint('/test', fn);
-    this.ns.endpoint('/test2', fn);
+    this.ignis.endpoint('/test', fn);
+    this.ignis.endpoint('/test2', fn);
 
-    return expect(this.ns.startup).to.be.fulfilled.then(i => {
+    return expect(this.ignis.startup).to.be.fulfilled.then(i => {
       expect(fn).to.be.calledOnce.and.to.be.calledWith('/test');
     });
 
-  });
-
-});
-
-describe('extension', function() {
-
-  it('should mount the extension', function() {
-    var ns = Object.create(null);
-    target.default(ns);
-
-    expect(ns.mount).to.be.a('function');
-    expect(ns.endpoint).to.be.a('function');
   });
 
 });

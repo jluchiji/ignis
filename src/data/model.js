@@ -8,12 +8,18 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
-import { namespace }         from '../util/symbols';
+import Symbol      from '../util/symbols';
 
 /*!
  * Debug logger.
  */
 const  debug     = Debug('ignis:model');
+
+
+/*!
+ * Export symbols used by model(2)
+ */
+export const __models = Symbol('Ignis::data::models');
 
 
 /**
@@ -26,7 +32,7 @@ const  debug     = Debug('ignis:model');
  * @returns        {model}     Resulting model object.
  */
 export function model(name, source, callback) {
-  let store = this.__models;
+  let store = this[__models];
 
   /* Get the model with the specified name if callback is not specified. */
   if (typeof callback !== 'function') {
@@ -59,13 +65,4 @@ export function model(name, source, callback) {
   });
 
   return this;
-}
-
-
-/*!
- * Extension
- */
-export default function dataModel(ignis) {
-  Object.defineProperty(ignis, '__models', { value: new Map() });
-  ignis.model = model;
 }

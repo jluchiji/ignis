@@ -11,9 +11,16 @@ import Express     from 'express';
 import Bluebird    from 'bluebird';
 import Monologue   from 'monologue.js';
 
-import { init, exts } from './util/symbols';
+import Symbol      from './util/symbols';
 
 const debug = Debug('ignis:core');
+
+/*!
+ * Export symbols used by Ignis class.
+ */
+const init = Symbol('Ignis::core::init');
+const exts = Symbol('Ignis::core::exts');
+
 
 /**
  * IgnisApp

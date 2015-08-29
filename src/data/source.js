@@ -8,8 +8,14 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
+import Symbol      from '../util/symbols';
 
 const  debug     = Debug('ignis:model');
+
+/*!
+ * Export symbols used by source(1)
+ */
+export const __sources = Symbol('Ignis::data::sources');
 
 
 /**
@@ -24,7 +30,7 @@ const  debug     = Debug('ignis:model');
  * @returns        {promise}   Promise that resolves if successful.
  */
 export function source(name, callback, ...args) {
-  let store = this.__sources;
+  let store = this[__sources];
 
   /* If callback is not specified, retrieve the source. */
   if (typeof callback !== 'function') {
@@ -51,13 +57,4 @@ export function source(name, callback, ...args) {
   });
 
   return this;
-}
-
-
-/*!
- * Extension
- */
-export default function dataSource(ignis) {
-  Object.defineProperty(ignis, '__sources', { value: new Map() });
-  ignis.source = source;
 }

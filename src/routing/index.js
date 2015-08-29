@@ -7,6 +7,14 @@
 
 import { mount }   from './mount';
 import { error }   from './error';
+import Symbol      from '../util/symbols';
+
+
+/*!
+ * Export symbols used by the mount(2).
+ */
+export const mounted = Symbol('Ignis::routing::mounted');
+
 
 /**
  * endpoint(2)
@@ -18,9 +26,9 @@ import { error }   from './error';
  */
 export function endpoint(path, fn) {
   this.wait(function() {
-    if (!this.__mounted.has(fn)) {
+    if (!this[mounted].has(fn)) {
       fn(path, this);
-      this.__mounted.add(fn);
+      this[mounted].add(fn);
     }
   });
 
@@ -32,16 +40,16 @@ export function endpoint(path, fn) {
  * Initializer.
  */
 export function init() {
-  Object.defineProperty(this, '__mounted', { value: new Set() });
+  this[mounted] = new Set();
 }
 
 
 /*!
  * Ignis extension.
  */
-export default function routingExtension(ignis) {
-  Object.defineProperty(ignis, '__mounted', { value: new Set() });
-  ignis.mount    = mount;
-  ignis.error    = error;
-  ignis.endpoint = endpoint;
+export default function routingExtension(Ignis) {
+  Ignis.init(init);
+  Ignis.prototype.mount    = mount;
+  Ignis.prototype.error    = error;
+  Ignis.prototype.endpoint = endpoint;
 }
