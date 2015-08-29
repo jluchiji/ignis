@@ -18,18 +18,6 @@ describe('Ignis Core', function() {
   require('./error.spec.js');
 });
 
-describe('Authentication', function() {
-  require('./auth/index.spec.js');
-  require('./auth/strategy.spec.js');
-});
-
-describe('Access Control', function() {
-  require('./access/index.spec.js');
-  require('./access/role.spec.js');
-  require('./access/action.spec.js');
-  require('./access/scope.spec.js');
-});
-
 describe('Configuration', function() {
   require('./config/index.spec.js');
   require('./config/envar.spec.js');
