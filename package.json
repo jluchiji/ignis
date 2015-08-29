@@ -39,6 +39,7 @@
     "gulp-sourcemaps": "^1.5.2",
     "jshint-stylish": "^2.0.1",
     "mocha-babel": "^3.0.0",
+    "no-op": "^1.0.3",
     "sinon": "^1.15.4",
     "source-map-support": "^0.3.2"
   },
@@ -51,6 +52,7 @@
     "express": "^4.13.3",
     "lodash": "^3.10.1",
     "monologue.js": "^0.3.3",
+    "parent-require": "^1.0.0",
     "passport": "^0.3.0",
     "passport-jwt": "^1.1.1",
     "passport-local": "^1.0.0",

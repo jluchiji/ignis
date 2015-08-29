@@ -47,6 +47,11 @@ describe('Ignis Class', function() {
       ignis.use(extension);
     });
 
+    it('should be able to auto load peer modules', function() {
+      let ignis = new Ignis();
+      ignis.use('no-op');
+    });
+
   });
 
   describe('init(0)', function() {

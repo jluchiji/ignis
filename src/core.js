@@ -8,6 +8,7 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import Express     from 'express';
+import Prequire    from 'parent-require';
 import Bluebird    from 'bluebird';
 import Monologue   from 'monologue.js';
 
@@ -150,6 +151,8 @@ Ignis.init = function(fn) {
  * @returns        {Ignis}     Ignis class for further chaining.
  */
 Ignis.use = function(fn) {
+  /* If fn is a string, load it first */
+  if (_.isString(fn)) { fn = Prequire(fn); }
   /* Handle ES6 modules with multiple exports */
   if (_.isObject(fn) && _.isFunction(fn.default)) { fn = fn.default; }
   /* No-op if this extension is already attached */
