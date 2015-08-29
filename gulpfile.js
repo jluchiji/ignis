@@ -67,7 +67,7 @@ gulp.task('test', ['lint'], function() {
 /*!
  * Generate test coverage report.
  */
-gulp.task('coverage', function(done) {
+gulp.task('coverage', ['build'], function(done) {
 
   gulp.src(['lib/**/*.js'])
   .pipe(istanbul())
