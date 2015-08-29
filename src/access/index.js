@@ -11,6 +11,7 @@ import Authorized  from 'authorized';
 import Role        from './role';
 import Scope       from './scope';
 import Action      from './action';
+import { __scopes } from './scope';
 
 /**
  * accessFactory(2)
@@ -37,16 +38,21 @@ export function accessFactory(ignis, meta) {
 /*!
  * Ignis extension
  */
-export default function accessExtension(ignis) {
+export default function accessExtension(Ignis) {
+  Ignis.init(function() {
+    /* Root acess-control namespace */
+    this.access = Object.create(null);
 
-  /* Root acess-control namespace */
-  ignis.access = Object.create(null);
+    /* Scope storage */
+    this[__scopes] = new Map();
 
-  /* Attach Authorized middlewares */
-  ignis.factories.push(accessFactory);
+    /* Attach Authorized middlewares */
+    this.factories.push(accessFactory);
 
-  /* Attach access-control callbacks */
-  Role(ignis);
-  Scope(ignis);
-  Action(ignis);
+    /* Attach access-control callbacks */
+    this.access.role   = Role;
+    this.access.scope  = Scope.bind(this);
+    this.access.action = Action;
+  });
+
 }

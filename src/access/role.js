@@ -18,7 +18,7 @@ import Unpromisify from '../util/unpromisify';
  * @param          {name}      Name of the role without entity.
  * @param          {callback}  Promise-generating callback function.
  */
-export function role(name, callback) {
+export default function role(name, callback) {
   callback = Unpromisify(callback);
 
   let wrapped = (req, done) => {
@@ -31,12 +31,4 @@ export function role(name, callback) {
   }
 
   Authorized.role(name, wrapped);
-}
-
-
-/*!
- * Ignis extension
- */
-export default function accessRole(ignis) {
-  ignis.access.role = role;
 }

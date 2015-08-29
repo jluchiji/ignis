@@ -8,7 +8,14 @@
 import Bluebird    from 'bluebird';
 import Authorized  from 'authorized';
 
+import Symbol      from '../util/symbols';
 import Unpromisify from '../util/unpromisify';
+
+
+/*!
+ * Symbols used by scope.js
+ */
+export const __scopes = Symbol('Ignis::access::scopes');
 
 
 /**
@@ -21,7 +28,7 @@ import Unpromisify from '../util/unpromisify';
  */
 export function getScope(ignis, name) {
   return Unpromisify(function(req) {
-    let callbacks = ignis.__scopes.get(name);
+    let callbacks = ignis[__scopes].get(name);
 
     /* Deny if there are no scope callbacks */
     if (!callbacks || callbacks.length === 0) {
@@ -53,8 +60,8 @@ export function getScope(ignis, name) {
  *                             entity using the specified ID.
  * @return         {this}      Namespace for further chaining.
  */
-export function scope(name, param, callback) {
-  let store = this.__scopes;
+export default function scope(name, param, callback) {
+  let store = this[__scopes];
 
   /* Create a scope if it is not already present */
   if (!store.has(name)) {
@@ -65,13 +72,4 @@ export function scope(name, param, callback) {
   }
 
   store.get(name).push({ param: param, callback: callback });
-}
-
-
-/*!
- * Ignis extension
- */
-export default function accessScope(ignis) {
-  ignis.access.__scopes = new Map();
-  ignis.access.scope = scope;
 }

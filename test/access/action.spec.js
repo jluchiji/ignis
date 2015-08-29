@@ -13,7 +13,8 @@ var Authorized     = require('authorized');
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
-var extension      = require('../../lib/access/action');
+var Ignis          = require('../../lib/core');
+var extension      = require('../../lib/access');
 
 describe('action(2)', function() {
 
@@ -22,23 +23,15 @@ describe('action(2)', function() {
 
   beforeEach(function() {
     Authorized.action = Sinon.spy();
+
+    this.ignis = new Ignis();
+    this.ignis.use(extension);
   });
 
   it('should proxy the call to Authorized.action', function() {
-    extension.action('test', ['role']);
+    this.ignis.access.action('test', ['role']);
 
-    expect(Authorized.action.calledOnce).to.equal(true);
-  });
-
-});
-
-describe('extension', function() {
-
-  it('should mount the extension', function() {
-    var ns = { access: Object.create(null) };
-    extension.default(ns);
-
-    expect(ns.access.action).to.equal(extension.action);
+    expect(Authorized.action).to.be.calledOnce;
   });
 
 });

@@ -13,13 +13,15 @@ var Authorized     = require('authorized');
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
-var extension      = require('../../lib/access/scope');
+var Ignis          = require('../../lib/core');
+var extension      = require('../../lib/access');
+var scope          = require('../../lib/access/scope');
 
 describe('getScope(1)', function() {
 
   beforeEach(function() {
-    this.ns = Object.create(null);
-    this.ns.__scopes = new Map();
+    this.ignis = new Ignis();
+    this.ignis.use(extension);
 
     this.test1 = {
       param:    'test_1',
@@ -41,76 +43,76 @@ describe('getScope(1)', function() {
       param:    'test_5',
       callback: Sinon.spy(function(i) { return 'hola, ' + i; })
     };
-    this.ns.__scopes.set('test', [
+    this.ignis[scope.__scopes].set('test', [
       this.test1,
       this.test3,
       this.test2,
       this.test4
     ]);
-    this.ns.__scopes.set('empty', [ ]);
+    this.ignis[scope.__scopes].set('empty', [ ]);
   });
 
   it('should generate a scope getter', function() {
-    var getter = extension.getScope(this.ns, 'test');
+    var getter = scope.getScope(this.ignis, 'test');
 
     return getter({ params: { 'test_1': 'test' } })
-      .then(function(data) {
+      .then(data => {
         expect(data).to.equal('test#1');
-        expect(this.test1.callback.calledOnce).to.equal(true);
+        expect(this.test1.callback).to.be.calledOnce;
         expect(this.test2.callback.callCount).to.equal(0);
-      }.bind(this));
+      });
   });
 
   it('should attempt getters in the order', function() {
-    var getter = extension.getScope(this.ns, 'test');
+    var getter = scope.getScope(this.ignis, 'test');
 
     return getter({ params: { 'test_2': 'foo' } })
-      .then(function(data) {
+      .then(data => {
         expect(data).to.equal('foo#2');
-        expect(this.test1.callback.calledOnce).to.equal(false);
-        expect(this.test2.callback.calledOnce).to.equal(true);
-      }.bind(this));
+        expect(this.test1.callback).not.to.be.called;
+        expect(this.test2.callback).to.be.calledOnce;
+      });
   });
 
   it('should resolve to null if there is no such scope', function() {
-    var getter = extension.getScope(this.ns, 'no-such');
+    var getter = scope.getScope(this.ignis, 'no-such');
 
     var promise = getter({ params: { 'test_2': 'foo' } })
     expect(promise).to.eventually.equal(null);
   });
 
   it('should resolve to null if there are no getters', function() {
-    var getter = extension.getScope(this.ns, 'empty');
+    var getter = scope.getScope(this.ignis, 'empty');
 
     var promise = getter({ params: { 'test_2': 'foo' } })
     expect(promise).to.eventually.equal(null);
   });
 
   it('should resolve to null if the entity resolves to null', function() {
-    var getter = extension.getScope(this.ns, 'test');
+    var getter = scope.getScope(this.ignis, 'test');
 
     var promise = getter({ params: { 'test_3': 'foo' } })
     expect(promise).to.eventually.equal(null);
   });
 
   it('should resolve to null if no getters matched', function() {
-    var getter = extension.getScope(this.ns, 'test');
+    var getter = scope.getScope(this.ignis, 'test');
 
     var promise = getter({ params: { 'test_999': 'foo' } })
     expect(promise).to.eventually.equal(null);
   });
 
   it('should gracefully handle errors', function() {
-    var getter = extension.getScope(this.ns, 'test');
+    var getter = scope.getScope(this.ignis, 'test');
 
     var promise = getter({ params: { 'test_4': 'foo' } });
     expect(promise).to.be.rejectedWith('test');
   });
 
   it('should handle changes after getter creation', function() {
-    var getter = extension.getScope(this.ns, 'test');
+    var getter = scope.getScope(this.ignis, 'test');
 
-    this.ns.__scopes.get('test').push(this.test5);
+    this.ignis[scope.__scopes].get('test').push(this.test5);
     var promise = getter({ params: { 'test_5': 'foo' } });
     expect(promise).to.eventually.equal('hola, foo');
   });
@@ -123,10 +125,9 @@ describe('scope(3)', function() {
   after(function() { Authorized.entity = Authorized._entity; });
 
   beforeEach(function() {
-    this.ns = {
-      __scopes: new Map(),
-      scope:    extension.scope
-    };
+    this.ignis = new Ignis();
+    this.ignis.use(extension);
+
     this.callback = Sinon.spy(function() { return 123; });
 
     Authorized.entity = Sinon.spy(function(name, callback) {
@@ -136,33 +137,21 @@ describe('scope(3)', function() {
 
   it('should create an entity and push getters', function() {
 
-    this.ns.scope('test', 'foo', this.callback);
+    this.ignis.access.scope('test', 'foo', this.callback);
 
-    expect(this.ns.__scopes.size).to.equal(1);
-    expect(Authorized.entity.calledOnce).to.equal(true);
-    expect(Authorized.entity.calledWith('test')).to.equal(true);
+    expect(this.ignis[scope.__scopes].size).to.equal(1);
+    expect(Authorized.entity).to.be.calledOnce;
+    expect(Authorized.entity).to.be.calledWith('test');
   });
 
   it('should reuse existing entity and push getters', function() {
 
-    this.ns.scope('test', 'foo', this.callback);
-    this.ns.scope('test', 'bar', this.callback);
+    this.ignis.access.scope('test', 'foo', this.callback);
+    this.ignis.access.scope('test', 'bar', this.callback);
 
-    expect(this.ns.__scopes.get('test').length).to.equal(2);
-    expect(Authorized.entity.calledOnce).to.equal(true);
-    expect(Authorized.entity.calledWith('test')).to.equal(true);
-  });
-
-});
-
-describe('extension', function() {
-
-  it('should mount the extension', function() {
-    var ns = { access: Object.create(null) };
-    extension.default(ns);
-
-    expect(ns.access.__scopes).to.be.an.instanceOf(Map);
-    expect(ns.access.scope).to.be.a('function').and.equal(extension.scope);
+    expect(this.ignis[scope.__scopes].get('test')).to.have.length(2);
+    expect(Authorized.entity).to.be.calledOnce;
+    expect(Authorized.entity).to.be.calledWith('test');
   });
 
 });

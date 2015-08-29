@@ -13,6 +13,7 @@ var Passport       = require('passport');
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
+var Ignis          = require('../../lib/core');
 var extension      = require('../../lib/auth');
 
 
@@ -31,24 +32,23 @@ describe('extension', function() {
   beforeEach(function() {
     Passport.use = Sinon.spy();
     Passport.authenticate = Sinon.spy();
+
+    this.ignis = new Ignis();
+    this.ignis.root.use = Sinon.spy(this.ignis.root.use);
   });
 
   it('should mount modules to the specified namespace', function() {
-    var namespace = Object.create(null);
-    namespace.root = { use: Sinon.spy() };
-    namespace.factories  = [];
+    this.ignis.use(extension);
 
-    extension.default(namespace);
+    expect(this.ignis.auth).to.be.an('object');
+    expect(this.ignis.auth.__alias).to.be.an('object');
+    expect(this.ignis.auth.__options).to.be.an('object');
 
-    expect(namespace.auth).to.be.an('object');
-    expect(namespace.auth.__alias).to.be.an('object');
-    expect(namespace.auth.__options).to.be.an('object');
+    expect(this.ignis.root.use).to.be.calledTwice;
+    expect(this.ignis.factories.length).to.equal(1);
 
-    expect(namespace.root.use).to.be.calledOnce;
-    expect(namespace.factories.length).to.equal(1);
-
-    expect(namespace.auth.jwt).to.be.a('function');
-    expect(namespace.auth.local).to.be.a('function');
+    expect(this.ignis.auth.jwt).to.be.a('function');
+    expect(this.ignis.auth.local).to.be.a('function');
 
   });
 
@@ -67,11 +67,7 @@ describe('factory(2)', function() {
   });
 
   beforeEach(function() {
-    this.ns = {
-      root: { use: Sinon.spy() },
-      factories:  [],
-    };
-    extension.default(this.ns);
+    this.ignis = new Ignis();
 
     Passport.use = Sinon.spy();
     Passport.authenticate = Sinon.spy(function() {
@@ -80,36 +76,36 @@ describe('factory(2)', function() {
   });
 
   it('should instantiate the appropriate middleware', function() {
-    var mw = extension.passportFactory(this.ns, { auth: 'local' });
+    var mw = extension.passportFactory(this.ignis, { auth: 'local' });
     mw();
 
-    expect(Passport.authenticate.calledOnce).to.equal(true);
-    expect(Passport.authenticate.calledWith('local')).to.equal(true);
+    expect(Passport.authenticate).to.be.calledOnce;
+    expect(Passport.authenticate).to.be.calledWith('local');
   });
 
   it('should resolve aliases', function() {
-    var mw = extension.passportFactory(this.ns, { auth: 'token' });
+    var mw = extension.passportFactory(this.ignis, { auth: 'token' });
     mw();
 
-    expect(Passport.authenticate.calledOnce).to.equal(true);
-    expect(Passport.authenticate.calledWith('jwt')).to.equal(true);
+    expect(Passport.authenticate).to.be.calledOnce
+    expect(Passport.authenticate).to.be.calledWith('jwt');
   });
 
   it('should handle options', function() {
-    var mw = extension.passportFactory(this.ns, { auth: { strategy: 'token' } });
+    var mw = extension.passportFactory(this.ignis, { auth: { strategy: 'token' } });
     mw();
 
-    expect(Passport.authenticate.calledOnce).to.equal(true);
-    expect(Passport.authenticate.calledWith('jwt')).to.equal(true);
+    expect(Passport.authenticate).to.be.calledOnce;
+    expect(Passport.authenticate).to.be.calledWith('jwt');
   });
 
   it('should return null when no strategy is specified', function() {
-    var mw = extension.passportFactory(this.ns, { });
+    var mw = extension.passportFactory(this.ignis, { });
     expect(mw).to.equal(null);
   });
 
   it('should return null when strategy is \'none\'', function() {
-    var mw = extension.passportFactory(this.ns, { auth: 'noNe' });
+    var mw = extension.passportFactory(this.ignis, { auth: 'noNe' });
     expect(mw).to.equal(null);
   });
 

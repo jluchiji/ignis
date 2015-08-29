@@ -11,9 +11,9 @@ import Passport    from 'passport';
 import * as JWT    from 'passport-jwt';
 import * as Local  from 'passport-local';
 
+import Symbols        from '../util/symbols';
 import Strategy       from './strategy';
 import { IgnisError } from '../error';
-
 
 
 /**
@@ -82,20 +82,20 @@ export function passportCallback(req, res, next) {
  *
  * @description                Ignis.js extension.
  */
-export default function auth(ignis) {
+export default function auth(Ignis) {
+  Ignis.init(function() {
+    /* Root authentication namespace */
+    this.auth = Object.create(null);
+    this.auth.__alias   = { 'token': 'jwt' };
+    this.auth.__options = { session: false };
 
-  /* Root authentication namespace */
-  ignis.auth = Object.create(null);
-  ignis.auth.__alias   = { 'token': 'jwt' };
-  ignis.auth.__options = { session: false };
+    /* Attach passport.js middlewares */
+    this.factories.push(passportFactory);
+    this.root.use(Parser.json());
+    this.root.use(Passport.initialize());
 
-  /* Attach passport.js middlewares */
-  ignis.factories.push(passportFactory);
-  ignis.root.use(Parser.json());
-  ignis.root.use(Passport.initialize());
-
-  /* Authentication mechanisms */
-  ignis.auth.jwt   = Strategy(JWT.Strategy);
-  ignis.auth.local = Strategy(Local.Strategy);
-
+    /* Authentication mechanisms */
+    this.auth.jwt   = Strategy(JWT.Strategy);
+    this.auth.local = Strategy(Local.Strategy);
+  });
 }

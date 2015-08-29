@@ -18,12 +18,12 @@ describe('Ignis Core', function() {
   require('./error.spec.js');
 });
 
-describe.skip('Authentication', function() {
+describe('Authentication', function() {
   require('./auth/index.spec.js');
   require('./auth/strategy.spec.js');
 });
 
-describe.skip('Access Control', function() {
+describe('Access Control', function() {
   require('./access/index.spec.js');
   require('./access/role.spec.js');
   require('./access/action.spec.js');

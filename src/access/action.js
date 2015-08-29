@@ -15,14 +15,6 @@ import Authorized  from 'authorized';
  * @param          {name}      Name of the action to register.
  * @param          {roles...}  Roles required for the action.
  */
-export function action(name, roles) {
+export default function action(name, roles) {
   Authorized.action(name, roles);
-}
-
-
-/*!
- * Ignis extension.
- */
-export default function accessAction(ignis) {
-  ignis.access.action = action;
 }

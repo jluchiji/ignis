@@ -13,6 +13,7 @@ var Authorized     = require('authorized');
 Chai.use(require('chai-as-promised'));
 var expect         = Chai.expect;
 
+var Ignis          = require('../../lib/core');
 var extension      = require('../../lib/access/index');
 
 describe('accessFactory(2)', function() {
@@ -54,16 +55,17 @@ describe('accessFactory(2)', function() {
 describe('extension', function() {
 
   it('should mount the extension', function() {
-    var ns = Object.create(null);
-    ns.factories = [];
-    extension.default(ns);
+    var ignis = new Ignis();
+    let n = ignis.factories.length;
 
-    expect(ns).to.have.property('access');
-    expect(ns.factories).to.have.length(1);
-    expect(ns.factories[0]).to.equal(extension.accessFactory);
-    expect(ns).to.have.deep.property('access.role');
-    expect(ns).to.have.deep.property('access.action');
-    expect(ns).to.have.deep.property('access.scope');
+    ignis.use(extension);
+
+    expect(ignis).to.have.property('access');
+    expect(ignis.factories).to.have.length(n + 1);
+    expect(ignis.factories[n]).to.equal(extension.accessFactory);
+    expect(ignis).to.have.deep.property('access.role');
+    expect(ignis).to.have.deep.property('access.action');
+    expect(ignis).to.have.deep.property('access.scope');
   });
 
 });
