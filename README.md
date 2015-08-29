@@ -4,8 +4,13 @@
 [![Code Climate](https://codeclimate.com/github/jluchiji/node-ignis/badges/gpa.svg)](https://codeclimate.com/github/jluchiji/node-ignis)
 [![Test Coverage](https://codeclimate.com/github/jluchiji/node-ignis/badges/coverage.svg)](https://codeclimate.com/github/jluchiji/node-ignis/coverage)
 
-Ignis.js is an opinionated framework for creating REST APIs. It's main purpose
-is to provide a framework that breaks tight coupling in typical express apps and
-allows easier testing of individual modules.
+**Ignis.js** is an opinionated framework for creating RESTful APIs. It emphasizes
+modularity and reduction of coupling between modules, and therefore much better
+testing experience.
 
-This project is still in development.
+## Getting Started
+Ignis.js is built on top of [express](https://github.com/strongloop/express), so
+you don't need to require express yourself.
+
+You can refer to the sample application in the `example` directory for a simple
+Ignis.js app.
