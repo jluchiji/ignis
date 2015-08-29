@@ -8,7 +8,7 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
-import Symbol      from '../util/symbols';
+import { symbol }  from 'ignis-util';
 
 /*!
  * Debug logger.
@@ -19,7 +19,7 @@ const  debug     = Debug('ignis:model');
 /*!
  * Export symbols used by model(2)
  */
-export const __models = Symbol('Ignis::data::models');
+export const __models = symbol('Ignis::data::models');
 
 
 /**

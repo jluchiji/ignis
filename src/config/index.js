@@ -6,15 +6,15 @@
  */
 
 import Debug       from 'debug';
+import { symbol }  from 'ignis-util';
 import Envar       from './envar';
-import Symbol      from '../util/symbols';
 
 const debug = Debug('ignis:config');
 
 /*!
  * Export symbols used by config(2).
  */
-const __store = Symbol('Ignis::config::store');
+const __store = symbol('Ignis::config::store');
 
 /**
  * config(2)

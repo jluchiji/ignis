@@ -12,15 +12,15 @@ import Prequire    from 'parent-require';
 import Bluebird    from 'bluebird';
 import Monologue   from 'monologue.js';
 
-import Symbol      from './util/symbols';
+import { symbol }  from 'ignis-util';
 
 const debug = Debug('ignis:core');
 
 /*!
  * Export symbols used by Ignis class.
  */
-const init = Symbol('Ignis::core::init');
-const exts = Symbol('Ignis::core::exts');
+const init = symbol('Ignis::core::init');
+const exts = symbol('Ignis::core::exts');
 
 
 /**

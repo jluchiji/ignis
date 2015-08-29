@@ -7,8 +7,7 @@
 
 import Bluebird    from 'bluebird';
 import Authorized  from 'authorized';
-
-import Unpromisify from '../util/unpromisify';
+import { unpromisify } from 'ignis-util';
 
 
 /**
@@ -19,7 +18,7 @@ import Unpromisify from '../util/unpromisify';
  * @param          {callback}  Promise-generating callback function.
  */
 export default function role(name, callback) {
-  callback = Unpromisify(callback);
+  callback = unpromisify(callback);
 
   let wrapped = (req, done) => {
     callback(req, done);

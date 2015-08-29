@@ -6,7 +6,7 @@
  */
 
 import Passport    from 'passport';
-import Unpromisify from '../util/unpromisify';
+import { unpromisify } from 'ignis-util';
 
 /**
  * strategy(1)
@@ -24,7 +24,7 @@ export default function strategy(ctor) {
       callback = arguments[1];
     }
 
-    let result = new ctor(options, Unpromisify(callback));
+    let result = new ctor(options, unpromisify(callback));
     Passport.use(result);
   };
 }

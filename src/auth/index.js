@@ -11,7 +11,6 @@ import Passport    from 'passport';
 import * as JWT    from 'passport-jwt';
 import * as Local  from 'passport-local';
 
-import Symbols        from '../util/symbols';
 import Strategy       from './strategy';
 import { IgnisError } from '../error';
 

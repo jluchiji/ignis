@@ -8,7 +8,7 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
-import Symbol      from '../util/symbols';
+import { symbol }  from 'ignis-util';
 
 const  debug     = Debug('ignis:model');
 

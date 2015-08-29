@@ -46,10 +46,3 @@ describe('Routing', function() {
   require('./routing/error.spec.js');
   require('./routing/mount.spec.js');
 });
-
-describe('Utility Functions', function() {
-  require('./util/index.spec.js');
-  require('./util/error-is.spec.js');
-  require('./util/expressify.spec.js');
-  require('./util/unpromisify.spec.js');
-});

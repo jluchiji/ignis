@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-import ErrorIs     from '../util/error-is';
+import { errorIs } from 'ignis-util';
 
 /**
  * error(2)
@@ -32,7 +32,7 @@ export function error(type, callback) {
  */
 export function handler(type, callback) {
   return function(err, req, res, next) {
-    if (ErrorIs(err, type)) { callback(err, req, res, next); }
+    if (errorIs(err, type)) { callback(err, req, res, next); }
     else { next(err); }
   };
 }

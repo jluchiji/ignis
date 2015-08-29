@@ -7,9 +7,7 @@
 
 import Bluebird    from 'bluebird';
 import Authorized  from 'authorized';
-
-import Symbol      from '../util/symbols';
-import Unpromisify from '../util/unpromisify';
+import { unpromisify, symbol } from 'ignis-util';
 
 
 /*!
@@ -27,7 +25,7 @@ export const __scopes = Symbol('Ignis::access::scopes');
  * @return         {Function}  Function that retrieves the scope.
  */
 export function getScope(ignis, name) {
-  return Unpromisify(function(req) {
+  return unpromisify(function(req) {
     let callbacks = ignis[__scopes].get(name);
 
     /* Deny if there are no scope callbacks */

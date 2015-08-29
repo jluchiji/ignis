@@ -7,13 +7,13 @@
 
 import { mount }   from './mount';
 import { error }   from './error';
-import Symbol      from '../util/symbols';
+import { symbol }  from 'ignis-util';
 
 
 /*!
  * Export symbols used by the mount(2).
  */
-export const mounted = Symbol('Ignis::routing::mounted');
+export const mounted = symbol('Ignis::routing::mounted');
 
 
 /**

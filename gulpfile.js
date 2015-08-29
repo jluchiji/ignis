@@ -11,6 +11,7 @@ var jscs           = require('gulp-jscs');
 var babel          = require('gulp-babel');
 var mocha          = require('gulp-mocha');
 var jshint         = require('gulp-jshint');
+var enforce        = require('gulp-istanbul-enforcer');
 var stylish        = require('gulp-jscs-stylish');
 var istanbul       = require('gulp-istanbul');
 var sourcemaps     = require('gulp-sourcemaps');
@@ -84,6 +85,22 @@ gulp.task('coverage', function(done) {
       .on('end', done);
   });
 
+});
+
+gulp.task('coverage:enforce', ['coverage'], function() {
+  var options = {
+    thresholds : {
+      statements : 100,
+      branches : 100,
+      lines : 100,
+      functions : 100
+    },
+    coverageDirectory : 'coverage',
+    rootDirectory : ''
+  };
+  return gulp
+    .src('.')
+    .pipe(coverageEnforcer(options));
 });
 
 /*!

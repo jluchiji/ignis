@@ -11,7 +11,7 @@ import _           from 'lodash';
 import Path        from 'path';
 import Debug       from 'debug';
 
-import Expressify  from '../util/expressify';
+import { expressify } from 'ignis-util';
 
 const  debug = Debug('ignis:mount');
 
@@ -40,7 +40,7 @@ export function mount(path, meta) {
     .value();
 
   /* Push the handler into the middleware stack */
-  middleware.push(Expressify(handler));
+  middleware.push(expressify(handler));
 
   /* Mount the middleware stack to the root router */
   let router = this.root;
