@@ -5,6 +5,7 @@
  * @license MIT
  */
 
+import _           from 'lodash';
 import Debug       from 'debug';
 import { symbol }  from 'ignis-util';
 import Envar       from './envar';
@@ -27,7 +28,7 @@ const __store = symbol('Ignis::config::store');
  */
 export function config(name, value) {
   let store = this[__store];
-  let old = store.get(name);
+  let old = _.get(store, name);
 
   /* Get config value if available */
   if (typeof value === 'undefined') {
@@ -39,7 +40,7 @@ export function config(name, value) {
   }
 
   /* Otherwise, set the config value */
-  store.set(name, value);
+  _.set(store, name, value);
   debug(`Ignis::config(): Modified ${name}`);
   this.emit(
     (typeof old === 'undefined') ? 'config.set' : 'config.modified',
@@ -57,7 +58,7 @@ export function config(name, value) {
  * Initializer
  */
 export function init() {
-  this[__store] = new Map();
+  this[__store] = Object.create(null);
   this.config = config;
   this.config.env = Envar.bind(this);
 }

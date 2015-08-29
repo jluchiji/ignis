@@ -34,6 +34,13 @@ describe('config(2)', function() {
     expect(result).to.equal('bar');
   });
 
+  it('should support get/set with deep paths', function() {
+    this.ignis.config('a.b.c.bar', 'foo');
+    var result = this.ignis.config('a');
+
+    expect(result).to.deep.equal({ b: { c: { bar: 'foo' } } });
+  });
+
   it('should throw when getting an undefined config', function() {
     expect(i => {
       this.ignis.config('foo');
