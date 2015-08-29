@@ -21,6 +21,7 @@ describe('Ignis Core', function() {
 describe('Configuration', function() {
   require('./config/index.spec.js');
   require('./config/envar.spec.js');
+  require('./config/file.spec.js');
 });
 
 describe('Data Handling', function() {

@@ -8,6 +8,8 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import { symbol }  from 'ignis-util';
+
+import File        from './file';
 import Envar       from './envar';
 
 const debug = Debug('ignis:config');
@@ -61,6 +63,7 @@ export function init() {
   this[__store] = Object.create(null);
   this.config = config;
   this.config.env = Envar.bind(this);
+  this.config.file = File.bind(this);
 }
 
 /*!
