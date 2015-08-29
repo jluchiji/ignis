@@ -39,7 +39,8 @@ describe('source(1)', function() {
   it('should connect if async callback succeeds', function() {
 
     var fake = { test: 1 };
-    var promise = this.ignis.source('test', function() {
+    var promise = this.ignis.source('test', (ignis) => {
+      expect(ignis).to.equal(this.ignis);
       return Bluebird.resolve(fake);
     });
 
@@ -79,7 +80,8 @@ describe('source(1)', function() {
   it('should correctly pass parameters to the callback', function() {
 
     var fake = { foo: 'bar' };
-    this.ignis.source('test', function(a, b) {
+    this.ignis.source('test', (ignis, a, b) => {
+      expect(ignis).to.equal(this.ignis);
       expect(a).to.equal(0);
       expect(b).to.equal(1);
       return fake;
