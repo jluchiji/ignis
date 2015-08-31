@@ -31,6 +31,9 @@ describe('Ignis Class', function() {
       let instance = Ignis();
       expect(instance).to.be.an.instanceOf(Ignis);
 
+      let instance2 = Ignis();
+      expect(instance2).to.be.an.instanceOf(Ignis).and.to.equal(instance);
+
       let another = Ignis(null);
       expect(another).to.be.an.instanceOf(Ignis).and.not.to.equal(instance);
 

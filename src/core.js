@@ -39,7 +39,7 @@ function Ignis(arg) {
 
   /* Get/set the global instance if this is called as function */
   if (!(this instanceof Ignis)) {
-    if (!arg || arg instanceof Ignis) {
+    if (arg === null || arg instanceof Ignis) {
       debug(`${Chalk.red('[replace]')} singleton`);
       instance = arg;
     }
