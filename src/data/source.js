@@ -45,7 +45,7 @@ export function source(name, callback, ...args) {
     debug(`Ignis::source(): Connecting to ${name}`);
 
     return Bluebird
-      .resolve(callback(this, ...args))
+      .resolve(callback(...args))
       .then((source) => {
         debug(`Ignis::source(): Connected to ${name}`);
         if (!source) {
