@@ -100,7 +100,7 @@ gulp.task('coverage:enforce', ['coverage'], function() {
   };
   return gulp
     .src('.')
-    .pipe(coverageEnforcer(options));
+    .pipe(enforce(options));
 });
 
 /*!

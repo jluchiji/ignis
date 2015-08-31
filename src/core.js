@@ -34,7 +34,7 @@ var   instance = null;
  *
  * @description Ignis application class.
  */
-export default function Ignis(arg) {
+function Ignis(arg) {
 
   /* Get/set the global instance if this is called as function */
   if (!(this instanceof Ignis)) {
@@ -52,6 +52,7 @@ export default function Ignis(arg) {
   this.init();
 }
 Ignis.prototype = new Monologue();
+export default Ignis;
 
 
 /**
