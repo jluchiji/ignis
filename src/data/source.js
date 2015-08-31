@@ -46,7 +46,7 @@ export function source(name, callback, ...args) {
     debug(`${Chalk.yellow('[connecting]')} ${name}`);
 
     return Bluebird
-      .resolve(callback(...args))
+      .resolve(callback(this, ...args))
       .then((source) => {
         debug(`${Chalk.cyan('[success]')} ${name}`);
         if (!source) {

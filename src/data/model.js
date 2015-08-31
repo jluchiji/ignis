@@ -51,7 +51,7 @@ export function model(name, source, callback) {
     let that   = Object.create(null);
 
     return Bluebird
-      .resolve(callback.call(that, src))
+      .resolve(callback.call(that, this, src))
       .then(result => {
         result = result || that;
 

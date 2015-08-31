@@ -25,6 +25,11 @@ describe('source(1)', function() {
     this.ignis.use(Data);
   });
 
+  it('should provide calling Ignis instance as argument', function() {
+    this.ignis.source('test', i => expect(i).to.equal(this.ignis));
+    expect(this.ignis.startup).to.be.fulfilled;
+  });
+
   it('should connect if sync callback succeeds', function() {
 
     var fake = { test: 0 };
@@ -79,7 +84,8 @@ describe('source(1)', function() {
   it('should correctly pass parameters to the callback', function() {
 
     var fake = { foo: 'bar' };
-    this.ignis.source('test', (a, b) => {
+    this.ignis.source('test', (i, a, b) => {
+      expect(i).to.equal(this.ignis);
       expect(a).to.equal(0);
       expect(b).to.equal(1);
       return fake;
