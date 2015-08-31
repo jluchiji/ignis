@@ -7,13 +7,14 @@
 
 import _           from 'lodash';
 import Debug       from 'debug';
+import Chalk       from 'chalk';
 import Bluebird    from 'bluebird';
 import { symbol }  from 'ignis-util';
 
 /*!
  * Debug logger.
  */
-const  debug     = Debug('ignis:model');
+const  debug     = Debug('ignis:data:model');
 
 
 /*!
@@ -46,7 +47,7 @@ export function model(name, source, callback) {
     let src = this.source(source);
     if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
 
-    debug(`Ignis::model(): Creating ${name}`);
+    debug(`${Chalk.cyan('[success]')} ${name}`);
     let that   = Object.create(null);
 
     return Bluebird

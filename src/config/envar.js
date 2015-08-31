@@ -6,6 +6,8 @@
  */
 
 import Debug       from 'debug';
+import Chalk       from 'chalk';
+
 const  debug = Debug('ignis:envar');
 
 /**
@@ -21,7 +23,7 @@ export default function env(fields) {
     .keys(fields)
     .forEach(key => {
       if (typeof process.env[key] === 'undefined') {
-        debug(`Ignis::config::envar(): Missing ${key}`);
+        debug(Chalk.red(`Missing ${key}`));
         this.emit('config.missing', { name: key, description: fields[key] });
       } else {
         this.config(`env.${key}`, process.env[key]);

@@ -6,11 +6,12 @@
  */
 
 import _           from 'lodash';
+import Chalk       from 'chalk';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
 import { symbol }  from 'ignis-util';
 
-const  debug     = Debug('ignis:model');
+const  debug     = Debug('ignis:data:source');
 
 /*!
  * Export symbols used by source(1)
@@ -42,12 +43,12 @@ export function source(name, callback, ...args) {
   /* Otherwise, create the data source */
   this.wait(function() {
     if (store.get(name)) { throw new Error(`Data source exists: ${name}`); }
-    debug(`Ignis::source(): Connecting to ${name}`);
+    debug(`${Chalk.yellow('[connecting]')} ${name}`);
 
     return Bluebird
       .resolve(callback(...args))
       .then((source) => {
-        debug(`Ignis::source(): Connected to ${name}`);
+        debug(`${Chalk.cyan('[success]')} ${name}`);
         if (!source) {
           throw new Error('Data source callback returned falsy value.');
         }

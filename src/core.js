@@ -7,6 +7,7 @@
 
 import _           from 'lodash';
 import Debug       from 'debug';
+import Chalk       from 'chalk';
 import Express     from 'express';
 import Prequire    from 'parent-require';
 import Bluebird    from 'bluebird';
@@ -38,9 +39,15 @@ function Ignis(arg) {
 
   /* Get/set the global instance if this is called as function */
   if (!(this instanceof Ignis)) {
-    if (arg instanceof Ignis) { instance = arg; }
-    if (!instance) { arg = new Ignis(); }
-    return arg;
+    if (arg instanceof Ignis) {
+      debug(`${Chalk.red('[replace]')} singleton`);
+      instance = arg;
+    }
+    if (!instance) {
+      debug(`${Chalk.green('[create]')} singleton`);
+      instance = new Ignis();
+    }
+    return instance;
   }
 
   /* Otherwise, this is a class constructor. */
@@ -79,7 +86,6 @@ Ignis.prototype.init = function() {
  * @returns        {Ignis}     Ignis instance for further chaining.
  */
 Ignis.prototype.wait = function(action) {
-  debug(`Ignis::wait()`);
   if (typeof action === 'function') {
     this.startup = this.startup.then(i => action.call(this, this.root));
   } else {
@@ -99,13 +105,13 @@ Ignis.prototype.wait = function(action) {
  * @returns        {promise}   Rejects when an error occurs.
  */
 Ignis.prototype.listen = function(port) {
-  debug('Ignis::listen()');
+  debug(`${Chalk.yellow('[call]')} Ignis::listen()`);
   if (typeof port !== 'number') { port = Number(process.env.PORT); }
   this.wait(i =>
     Bluebird.fromNode((done) => {
       this.root.listen(port, done);
     })
-    .tap(i => debug('Ignis::listen(): Ignis up and ready'))
+    .tap(i => debug(`${Chalk.cyan('[success]')} Ignis::listen()`))
   );
   return this.startup;
 };

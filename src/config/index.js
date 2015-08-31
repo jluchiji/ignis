@@ -7,6 +7,7 @@
 
 import _           from 'lodash';
 import Debug       from 'debug';
+import Chalk       from 'chalk';
 import { symbol }  from 'ignis-util';
 
 import File        from './file';
@@ -43,9 +44,10 @@ export function config(name, value) {
 
   /* Otherwise, set the config value */
   _.set(store, name, value);
-  debug(`Ignis::config(): Modified ${name}`);
+  let ev = (typeof old === 'undefined') ? 'set' : 'modified';
+  debug(`${Chalk.yellow('[' + ev + ']')} ${name}`);
   this.emit(
-    (typeof old === 'undefined') ? 'config.set' : 'config.modified',
+    `config.${ev}`,
     {
       name:     name,
       oldValue: old,
