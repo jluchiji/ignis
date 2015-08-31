@@ -15,5 +15,8 @@ Ignis.use(require('./config'));
 Ignis.use(require('./data'));
 Ignis.use(require('./routing'));
 
-const  instance = new Ignis();
-export default instance;
+
+/*!
+ * Export the Ignis class.
+ */
+export default Ignis;

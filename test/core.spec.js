@@ -17,6 +17,30 @@ var Ignis          = require('../lib/core');
 
 describe('Ignis Class', function() {
 
+  describe('constructor(1)', function() {
+
+    it('should create a new Ignis instance', function() {
+      let ignis = new Ignis();
+      expect(ignis).to.be.an.instanceOf(Ignis);
+
+      let ignis2 = Ignis();
+      expect(ignis2).to.be.an.instanceOf(Ignis).and.not.to.equal(ignis);
+    });
+
+    it('should get the global instance', function() {
+      let instance = Ignis();
+      expect(instance).to.be.an.instanceOf(Ignis);
+
+      let another = Ignis(null);
+      expect(another).to.be.an.instanceOf(Ignis).and.not.to.equal(instance);
+
+      let created = new Ignis();
+      let yetAnother = Ignis(created);
+      expect(yetAnother).to.be.an.instanceOf(Ignis).and.to.equal(created);
+    });
+
+  });
+
   describe('use(1)', function() {
 
     var callback = Sinon.spy();

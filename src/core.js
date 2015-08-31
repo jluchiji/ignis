@@ -23,86 +23,91 @@ const init = symbol('Ignis::core::init');
 const exts = symbol('Ignis::core::exts');
 
 
+/*!
+ * Global Ignis instance.
+ */
+var   instance = null;
+
+
 /**
  * IgnisApp
  *
  * @description Ignis application class.
  */
-export default class Ignis extends Monologue {
+export default function Ignis(arg) {
 
-  constructor() {
-    super();
-
-    /* Set to keep track of applied initializers */
-    this[init]      = new Set();
-
-    /* Ignis application middleware management */
-    this.factories  = [ ];
-
-    /* Startup sequence root promise */
-    this.startup    = Bluebird.resolve();
-
-    /* Root express router */
-    this.root       = Express();
-
-    this.init();
+  /* Get/set the global instance if this is called as function */
+  if (!(this instanceof Ignis)) {
+    if (arg instanceof Ignis) { instance = arg; }
+    if (!instance) { arg = new Ignis(); }
+    return arg;
   }
 
+  /* Otherwise, this is a class constructor. */
+  this[init]      = new Set();
+  this.root       = Express();
+  this.startup    = Bluebird.resolve();
+  this.factories  = [ ];
 
-  /**
-   * init(0)
-   *
-   * @description              Runs all initializers that have not been run on
-   *                           this Ignis instance.
-   */
-  init() {
-    Ignis[init].forEach(fn => {
-      if (this[init].has(fn)) { return; }
-      this[init].add(fn);
-      fn.call(this);
-    });
+  this.init();
+}
+Ignis.prototype = new Monologue();
+
+
+/**
+ * init(0)
+ *
+ * @description              Runs all initializers that have not been run on
+ *                           this Ignis instance.
+ */
+Ignis.prototype.init = function() {
+  Ignis[init].forEach(fn => {
+    if (this[init].has(fn)) { return; }
+    this[init].add(fn);
+    fn.call(this);
+  });
+};
+
+
+/**
+ * wait(1)
+ *
+ * @access         public
+ * @description                Makes Ignis wait for the promise before starting.
+ * @param          {action}    Function to call and wait for.
+ * @returns        {Ignis}     Ignis instance for further chaining.
+ */
+Ignis.prototype.wait = function(action) {
+  debug(`Ignis::wait()`);
+  if (typeof action === 'function') {
+    this.startup = this.startup.then(i => action.call(this, this.root));
+  } else {
+    throw new Error('Cannot wait on non-function objects.');
   }
+  return this;
+};
 
 
-  /**
-   * wait(1)
-   *
-   * @access         public
-   * @description                Makes Ignis wait for the promise before starting.
-   * @param          {action}    Function to call and wait for.
-   * @returns        {Ignis}     Ignis instance for further chaining.
-   */
-  wait(action) {
-    debug(`Ignis::wait()`);
-    if (typeof action === 'function') {
-      this.startup = this.startup.then(i => action.call(this, this.root));
-    } else {
-      throw new Error('Cannot wait on non-function objects.');
-    }
-    return this;
-  }
-
-
-  /**
-   * listen(1)
-   *
-   * @description                Creates an Express.js application, mounts the
-   *                             root router and listens for connections on the
-   *                             specified port.
-   * @param          {port}      [Optional] Port to listen on (default: PORT)
-   * @returns        {promise}   Rejects when an error occurs.
-   */
-  listen(port) {
-    debug('Ignis::listen()');
-    if (typeof port !== 'number') { port = Number(process.env.PORT); }
-    this.wait(i =>
-      Bluebird.fromNode((done) => {
-        this.root.listen(port, done);
-      })
-      .tap(i => debug('Ignis::listen(): Ignis up and ready'))
-    );
-    return this.startup;
-  }
+/**
+ * listen(1)
+ *
+ * @description                Creates an Express.js application, mounts the
+ *                             root router and listens for connections on the
+ *                             specified port.
+ * @param          {port}      [Optional] Port to listen on (default: PORT)
+ * @returns        {promise}   Rejects when an error occurs.
+ */
+Ignis.prototype.listen = function(port) {
+  debug('Ignis::listen()');
+  if (typeof port !== 'number') { port = Number(process.env.PORT); }
+  this.wait(i =>
+    Bluebird.fromNode((done) => {
+      this.root.listen(port, done);
+    })
+    .tap(i => debug('Ignis::listen(): Ignis up and ready'))
+  );
+  return this.startup;
+};
 
 
   /**
@@ -113,9 +118,10 @@ export default class Ignis extends Monologue {
    * @param          {fn}        Function exported by the extension module.
    * @returns        {Ignis}     Ignis class for further chaining.
    */
-  use(fn) { Ignis.use.call(this, fn); }
+Ignis.prototype.use = function(fn) {
+  Ignis.use.call(this, fn);
+};
 
-}
 
 
 /*!
