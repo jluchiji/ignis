@@ -5,7 +5,6 @@
  * @license MIT
  */
 
-import _           from 'lodash';
 import Debug       from 'debug';
 import Chalk       from 'chalk';
 import Bluebird    from 'bluebird';
@@ -33,22 +32,22 @@ export const __models = symbol('Ignis::data::models');
  * @returns        {model}     Resulting model object.
  */
 export function model(name, source, callback) {
-  let store = this[__models];
+  const store = this[__models];
 
   /* Get the model with the specified name if callback is not specified. */
   if (typeof callback !== 'function') {
-    let result = store.get(name);
+    const result = store.get(name);
     if (!result) { throw new Error(`Model not found: ${name}`); }
     return result;
   }
 
   /* Otherwise, create a new model. */
   this.wait(function() {
-    let src = this.source(source);
+    const src = this.source(source);
     if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
 
     debug(`${Chalk.cyan('[success]')} ${name}`);
-    let that   = Object.create(null);
+    const that   = Object.create(null);
 
     return Bluebird
       .resolve(callback.call(that, this, src))

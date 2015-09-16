@@ -4,21 +4,23 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+/* eslint-disable no-var */
 
 var fs             = require('fs');
 var gulp           = require('gulp');
-var jscs           = require('gulp-jscs');
 var babel          = require('gulp-babel');
 var mocha          = require('gulp-mocha');
-var jshint         = require('gulp-jshint');
+var eslint         = require('gulp-eslint');
 var enforce        = require('gulp-istanbul-enforcer');
-var stylish        = require('gulp-jscs-stylish');
 var istanbul       = require('gulp-istanbul');
 var sourcemaps     = require('gulp-sourcemaps');
 
 var config         = require('./package.json');
 
-var babelc         = require('mocha-babel');
+var eslintrc        = JSON.parse(fs.readFileSync('.eslintrc', 'utf8'));
+
+
+require('mocha-babel');
 
 /*!
  * Transpile ES6 source files into ES5.
@@ -38,16 +40,10 @@ gulp.task('build', ['lint'], function() {
  */
 gulp.task('lint', function() {
 
-  var jshintConfig = JSON.parse(fs.readFileSync('.jshintrc', 'utf8'));
-  var jscsConfig   = JSON.parse(fs.readFileSync('.jscsrc',   'utf8'));
-
-  return gulp.src(['src/**/*.{js,es6}'])
-    .pipe(jshint(jshintConfig))
-    .pipe(jscs(jscsConfig))
-    .on('error', function() { })
-    .pipe(stylish.combineWithHintResults())
-    .pipe(jshint.reporter('jshint-stylish'))
-    .pipe(jshint.reporter('fail'));
+  return gulp.src(['src/**/*.js'])
+  .pipe(eslint(eslintrc))
+  .pipe(eslint.format())
+  .pipe(eslint.failAfterError());
 
 });
 

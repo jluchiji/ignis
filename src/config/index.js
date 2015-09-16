@@ -30,8 +30,8 @@ const __store = symbol('Ignis::config::store');
  * @returns                    {this} for set; config value for get.
  */
 export function config(name, value) {
-  let store = this[__store];
-  let old = _.get(store, name);
+  const store = this[__store];
+  const old = _.get(store, name);
 
   /* Get config value if available */
   if (typeof value === 'undefined') {
@@ -44,7 +44,7 @@ export function config(name, value) {
 
   /* Otherwise, set the config value */
   _.set(store, name, value);
-  let ev = (typeof old === 'undefined') ? 'set' : 'modified';
+  const ev = (typeof old === 'undefined') ? 'set' : 'modified';
   debug(`${Chalk.yellow('[' + ev + ']')} ${name}`);
   this.emit(
     `config.${ev}`,

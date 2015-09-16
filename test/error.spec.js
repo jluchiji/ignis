@@ -58,11 +58,13 @@ describe('IgnisError', function() {
     it('should mount the extension', function() {
       let instance = new Ignis();
       instance.use(extension);
-      
-      expect(instance).to.have.property('deny', extension.IgnisError.deny);
-      expect(instance).to.have.property('panic', extension.IgnisError.panic);
-      expect(instance).to.have.property('notFound', extension.IgnisError.notFound);
-      expect(Ignis).to.have.property('Error', extension.IgnisError);
+
+      return expect(instance.startup).to.be.fulfilled.then(function() {
+        expect(instance).to.have.property('deny', extension.IgnisError.deny);
+        expect(instance).to.have.property('panic', extension.IgnisError.panic);
+        expect(instance).to.have.property('notFound', extension.IgnisError.notFound);
+        expect(Ignis).to.have.property('Error', extension.IgnisError);
+      });
     });
 
   });

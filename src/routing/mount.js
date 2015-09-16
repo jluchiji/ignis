@@ -6,7 +6,6 @@
  */
 
 
-
 import _           from 'lodash';
 import Path        from 'path';
 import Debug       from 'debug';
@@ -23,10 +22,10 @@ const  debug = Debug('ignis:mount');
  * @return         {this}      Namespace for further chaining.
  */
 export function mount(path, meta) {
-  let handler = meta.handler;
+  const handler = meta.handler;
 
   /* Split out the HTTP verb and URL. */
-  let [ verb, url ] = meta.path.split(' ', 2);
+  let [ verb, url ] = meta.path.split(' ', 2); // eslint-disable-line prefer-const
   if (!verb || !url) { throw new Error(`Invalid mount path: ${meta.path}`); }
 
   /* Determine where to mount the endpoint */
@@ -34,7 +33,7 @@ export function mount(path, meta) {
   debug(`Ignis::mount(): ${verb.toUpperCase()} ${url}`);
 
   /* Generate the middleware stack */
-  let middleware = _.chain(this.factories)
+  const middleware = _.chain(this.factories)
     .map(factory => factory(this, meta))
     .compact()
     .value();
@@ -43,8 +42,8 @@ export function mount(path, meta) {
   middleware.push(expressify(handler));
 
   /* Mount the middleware stack to the root router */
-  let router = this.root;
-  let method = router[verb.toLowerCase()];
+  const router = this.root;
+  const method = router[verb.toLowerCase()];
 
   if (!method) { throw new Error(`HTTP verb not supported: ${verb}`); }
   method.call(router, url, ...middleware);

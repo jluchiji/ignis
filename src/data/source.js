@@ -5,11 +5,9 @@
  * @license MIT
  */
 
-import _           from 'lodash';
 import Chalk       from 'chalk';
 import Debug       from 'debug';
 import Bluebird    from 'bluebird';
-import { symbol }  from 'ignis-util';
 
 const  debug     = Debug('ignis:data:source');
 
@@ -31,11 +29,11 @@ export const __sources = Symbol('Ignis::data::sources');
  * @returns        {promise}   Promise that resolves if successful.
  */
 export function source(name, callback, ...args) {
-  let store = this[__sources];
+  const store = this[__sources];
 
   /* If callback is not specified, retrieve the source. */
   if (typeof callback !== 'function') {
-    let result = store.get(name);
+    const result = store.get(name);
     if (!result) { throw new Error(`Data source not found: ${name}`); }
     return result;
   }
@@ -47,13 +45,13 @@ export function source(name, callback, ...args) {
 
     return Bluebird
       .resolve(callback(this, ...args))
-      .then((source) => {
+      .then(src => {
         debug(`${Chalk.cyan('[success]')} ${name}`);
-        if (!source) {
+        if (!src) {
           throw new Error('Data source callback returned falsy value.');
         }
-        store.set(name, source);
-        return source;
+        store.set(name, src);
+        return src;
       });
   });
 

@@ -24,7 +24,9 @@ describe('config(2)', function() {
 
   it('should mount to a namespace', function() {
     this.ignis.use(target);
-    expect(this.ignis.config).to.be.a('function').and.equal(target.config);
+    return this.ignis.startup.then(() => {
+      expect(this.ignis.config).to.be.a('function').and.equal(target.config);
+    });
   });
 
   it('should get/set the config value', function() {

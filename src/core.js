@@ -27,7 +27,7 @@ const exts = symbol('Ignis::core::exts');
 /*!
  * Global Ignis instance.
  */
-var   instance = null;
+let instance = null;
 
 
 /**
@@ -87,7 +87,7 @@ Ignis.prototype.init = function() {
  */
 Ignis.prototype.wait = function(action) {
   if (typeof action === 'function') {
-    this.startup = this.startup.then(i => action.call(this, this.root));
+    this.startup = this.startup.then(() => action.call(this, this.root));
   } else {
     throw new Error('Cannot wait on non-function objects.');
   }
@@ -107,11 +107,11 @@ Ignis.prototype.wait = function(action) {
 Ignis.prototype.listen = function(port) {
   debug(`${Chalk.yellow('[call]')} Ignis::listen()`);
   if (typeof port !== 'number') { port = Number(process.env.PORT); }
-  this.wait(i =>
+  this.wait(() =>
     Bluebird.fromNode((done) => {
       this.root.listen(port, done);
     })
-    .tap(i => debug(`${Chalk.cyan('[success]')} Ignis::listen()`))
+    .tap(() => debug(`${Chalk.cyan('[success]')} Ignis::listen()`))
   );
   return this.startup;
 };
@@ -126,9 +126,9 @@ Ignis.prototype.listen = function(port) {
    * @returns        {Ignis}     Ignis class for further chaining.
    */
 Ignis.prototype.use = function(fn) {
-  Ignis.use.call(this, fn);
+  this.wait(() => Ignis.use.call(this, fn));
+  return this;
 };
-
 
 
 /*!

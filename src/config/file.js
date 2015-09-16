@@ -5,7 +5,6 @@
  * @license MIT
  */
 
-import FS          from 'fs';
 import Path        from 'path';
 import Debug       from 'debug';
 import Chalk       from 'chalk';
@@ -29,11 +28,11 @@ require('require-yaml');
  *                             module root path.
  */
 export default function file(path) {
-  let abs = Path.resolve(AppRoot.path, path);
+  const abs = Path.resolve(AppRoot.path, path);
   debug(Chalk.dim(abs));
-  let cfg = require(abs);
+  const cfg = require(abs);
 
   /* Setup configuration */
-  let name = Path.basename(path, Path.extname(path));
+  const name = Path.basename(path, Path.extname(path));
   this.config(name, cfg);
 }

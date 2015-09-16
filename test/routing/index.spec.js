@@ -24,8 +24,10 @@ describe('endpoint(2)', function() {
   it('should mount the extension', function() {
     this.ignis.use(target);
 
-    expect(this.ignis.mount).to.be.a('function');
-    expect(this.ignis.endpoint).to.be.a('function');
+    return this.ignis.startup.then(() => {
+      expect(this.ignis.mount).to.be.a('function');
+      expect(this.ignis.endpoint).to.be.a('function');
+    });
   });
 
   it('should mount an endpoint', function() {

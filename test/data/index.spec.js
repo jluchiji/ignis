@@ -22,8 +22,11 @@ describe('extension', function() {
     var ignis = new Ignis();
     ignis.use(Data);
 
-    expect(ignis.source).to.be.a('function');
-    expect(ignis.model).to.be.a('function');
+    return ignis.startup.then(() => {
+      expect(ignis.source).to.be.a('function');
+      expect(ignis.model).to.be.a('function');
+    });
+
   });
 
 });

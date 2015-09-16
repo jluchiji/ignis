@@ -8,6 +8,24 @@
 import { errorIs } from 'ignis-util';
 
 /**
+ * handler(2)
+ *
+ * @description                Creates an express error handler that only
+ *                             handles error specified by {type}.
+ * @param          {type}      Type of the error to handle.
+ * @return         {Function}  Express.js error handler callback.
+ */
+export function handler(type, callback) {
+  return function(err, req, res, next) {
+    if (errorIs(err, type)) {
+      callback(err, req, res, next);
+    } else {
+      next(err);
+    }
+  };
+}
+
+/**
  * error(2)
  *
  * @description                Adds an error handler to the error handler stack.
@@ -19,20 +37,4 @@ export function error(type, callback) {
     router.use(handler(type, callback));
   });
   return this;
-}
-
-
-/**
- * handler(2)
- *
- * @description                Creates an express error handler that only
- *                             handles error specified by {type}.
- * @param          {type}      Type of the error to handle.
- * @return         {Function}  Express.js error handler callback.
- */
-export function handler(type, callback) {
-  return function(err, req, res, next) {
-    if (errorIs(err, type)) { callback(err, req, res, next); }
-    else { next(err); }
-  };
 }
