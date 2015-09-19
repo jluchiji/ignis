@@ -22,6 +22,8 @@ const  debug = Debug('ignis:mount');
  * @return         {this}      Namespace for further chaining.
  */
 export function mount(path, meta) {
+  if (meta.__esModule) { meta = meta.default; }
+
   const handler = meta.handler;
 
   /* Split out the HTTP verb and URL. */
@@ -39,6 +41,10 @@ export function mount(path, meta) {
     .value();
 
   /* Push the handler into the middleware stack */
+  if (typeof handler !== 'function') {
+    throw new Error(
+      `Expected handler to be a function but got ${typeof handler}`);
+  }
   middleware.push(expressify(handler));
 
   /* Mount the middleware stack to the root router */

@@ -25,6 +25,8 @@ export const mounted = symbol('Ignis::routing::mounted');
  * @return         {this}      Namespace for further chaining.
  */
 export function endpoint(path, fn) {
+  if (fn.__esModule && typeof fn.default === 'function') { fn = fn.default; }
+
   this.wait(function() {
     if (!this[mounted].has(fn)) {
       fn(path, this);
