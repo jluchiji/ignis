@@ -8,11 +8,19 @@
 
 import _           from 'lodash';
 import Path        from 'path';
+import Chalk       from 'chalk';
 import Debug       from 'debug';
 
 import { expressify } from 'ignis-util';
 
 const  debug = Debug('ignis:mount');
+
+const  styles = {
+  GET: Chalk.bold.blue('GET   '),
+  PUT: Chalk.bold.yellow('PUT   '),
+  POST: Chalk.bold.green('POST  '),
+  DELETE: Chalk.bold.red('DELETE')
+};
 
 /**
  * mount(2)
@@ -24,6 +32,7 @@ const  debug = Debug('ignis:mount');
 export function mount(path, meta) {
   if (meta.__esModule) { meta = meta.default; }
 
+  const status  = meta.status || 200;
   const handler = meta.handler;
 
   /* Split out the HTTP verb and URL. */
@@ -32,7 +41,9 @@ export function mount(path, meta) {
 
   /* Determine where to mount the endpoint */
   url = _.trimRight(Path.join(path, url), '/');
-  debug(`Ignis::mount(): ${verb.toUpperCase()} ${url}`);
+  verb = verb.toUpperCase();
+
+  debug(`${styles[verb] || verb} ${url}`);
 
   /* Generate the middleware stack */
   const middleware = _.chain(this.factories)
@@ -45,7 +56,7 @@ export function mount(path, meta) {
     throw new Error(
       `Expected handler to be a function but got ${typeof handler}`);
   }
-  middleware.push(expressify(handler));
+  middleware.push(expressify(handler, status));
 
   /* Mount the middleware stack to the root router */
   const router = this.root;
