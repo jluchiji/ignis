@@ -20,7 +20,6 @@ describe('mount(2)', function() {
     this.meta = {
       path: 'POST /test/',
       auth: 'token',
-      status: 201,
       handler: function() { }
     };
 
@@ -56,6 +55,25 @@ describe('mount(2)', function() {
     expect(function() {
       this.ns.mount('/', this.meta);
     }.bind(this)).to.throw('HTTP verb not supported: ');
+  });
+
+  it('should throw on bad handler', function() {
+    this.meta.handler = null;
+
+    expect(function() {
+      this.ns.mount('/foo/:bar', this.meta);
+    }.bind(this)).to.throw('Expected handler to be a function but got');
+  });
+
+  it('should handle ES6 module required from CommonJS', function() {
+    this.meta = { __esModule: true, default: this.meta };
+
+    this.ns.mount('/foo/:bar', this.meta);
+
+    var router = this.ns.root.post;
+    expect(router).to.be.calledOnce;
+    expect(router).to.be.calledWith('/foo/:bar/test', 'token');
+    expect(router.firstCall.args[2]).to.be.a('function');
   });
 
 });
