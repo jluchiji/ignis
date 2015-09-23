@@ -16,10 +16,10 @@ import { expressify } from 'ignis-util';
 const  debug = Debug('ignis:mount');
 
 const  styles = {
-  GET: Chalk.bold.blue('GET   '),
-  PUT: Chalk.bold.yellow('PUT   '),
-  POST: Chalk.bold.green('POST  '),
-  DELETE: Chalk.bold.red('DELETE')
+  get:    Chalk.bold.blue('GET   '),
+  put:    Chalk.bold.yellow('PUT   '),
+  post:   Chalk.bold.green('POST  '),
+  delete: Chalk.bold.red('DELETE')
 };
 
 /**
@@ -34,16 +34,6 @@ export function mount(path, meta) {
 
   const status  = meta.status || 200;
   const handler = meta.handler;
-
-  /* Split out the HTTP verb and URL. */
-  let [ verb, url ] = meta.path.split(' ', 2); // eslint-disable-line prefer-const
-  if (!verb || !url) { throw new Error(`Invalid mount path: ${meta.path}`); }
-
-  /* Determine where to mount the endpoint */
-  url = _.trimRight(Path.join(path, url), '/');
-  verb = verb.toUpperCase();
-
-  debug(`${styles[verb] || verb} ${url}`);
 
   /* Generate the middleware stack */
   const middleware = _.chain(this.factories)
@@ -60,10 +50,27 @@ export function mount(path, meta) {
 
   /* Mount the middleware stack to the root router */
   const router = this.root;
-  const method = router[verb.toLowerCase()];
 
-  if (!method) { throw new Error(`HTTP verb not supported: ${verb}`); }
-  method.call(router, url, ...middleware);
+  /* Split out the HTTP verb and URL. */
+  meta.path = _.flatten([meta.path]);
+  meta.path.forEach(uri => {
+
+    let [ verb, url ] = uri.split(' ', 2); // eslint-disable-line prefer-const
+    if (!verb || !url) { throw new Error(`Invalid mount path: ${uri}`); }
+
+    /* Determine where to mount the endpoint */
+    url = _.trimRight(Path.join(path, url), '/');
+    verb = verb.toLowerCase();
+
+    debug(`${styles[verb] || verb.toUpperCase()} ${url}`);
+
+    const method = router[verb];
+    if (!method) {
+      throw new Error(`HTTP verb not supported: ${verb.toUpperCase()}`);
+    }
+    method.call(router, url, ...middleware);
+
+  });
 
   return this;
 }

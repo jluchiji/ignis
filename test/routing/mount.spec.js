@@ -41,6 +41,18 @@ describe('mount(2)', function() {
     expect(router.firstCall.args[2]).to.be.a('function');
   });
 
+  it('should handle endpoint with multiple paths', function() {
+    this.meta.path = [ 'POST /test/', 'POST /foo', 'POST /bar' ];
+    this.ns.mount('/foo/:bar', this.meta);
+
+    const router = this.ns.root.post;
+    expect(router).to.be.calledThrice;
+    expect(router).to.be.calledWith('/foo/:bar/test', 'token');
+    expect(router).to.be.calledWith('/foo/:bar/foo', 'token');
+    expect(router).to.be.calledWith('/foo/:bar/bar', 'token');
+    expect(router.firstCall.args[2]).to.be.a('function');
+  });
+
   it('should throw on invalid mount path', function() {
     this.meta.path = 'POST/test';
 
