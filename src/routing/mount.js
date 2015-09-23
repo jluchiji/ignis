@@ -52,8 +52,12 @@ export function mount(path, meta) {
   const router = this.root;
 
   /* Split out the HTTP verb and URL. */
+  if (!meta.path || meta.path.length === 0) {
+    throw new Error('Mount path is missing or empty.');
+  }
   meta.path = _.flatten([meta.path]);
   meta.path.forEach(uri => {
+
 
     let [ verb, url ] = uri.split(' ', 2); // eslint-disable-line prefer-const
     if (!verb || !url) { throw new Error(`Invalid mount path: ${uri}`); }

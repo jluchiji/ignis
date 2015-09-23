@@ -61,6 +61,22 @@ describe('mount(2)', function() {
     }.bind(this)).to.throw('Invalid mount path: ');
   });
 
+  it('should throw on missing mount path', function() {
+    this.meta.path = undefined;
+
+    expect(function() {
+      this.ns.mount('/', this.meta);
+    }.bind(this)).to.throw('Mount path is missing or empty.');
+  });
+
+  it('should throw on empty mount path', function() {
+    this.meta.path = [ ];
+
+    expect(function() {
+      this.ns.mount('/', this.meta);
+    }.bind(this)).to.throw('Mount path is missing or empty.');
+  });
+
   it('should throw on invalid method', function() {
     this.meta.path = 'DOSOMETHING /test';
 
