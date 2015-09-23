@@ -43,14 +43,14 @@ export function model(name, source, callback) {
 
   /* Otherwise, create a new model. */
   this.wait(function() {
-    const src = this.source(source);
+    const src = source && this.source(source);
     if (store.get(name)) { throw new Error(`Model already exists: ${name}`); }
 
     debug(`${Chalk.cyan('[success]')} ${name}`);
     const that   = Object.create(null);
 
     return Bluebird
-      .resolve(callback.call(that, this, src))
+      .try(() => callback.call(that, this, src))
       .then(result => {
         result = result || that;
 

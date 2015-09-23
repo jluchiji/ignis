@@ -97,4 +97,13 @@ describe('model(2)', function() {
     });
   });
 
+  it('should allow models without a data source', function() {
+    this.ignis.model('test', null, (ignis, data) => {
+      expect(ignis).to.equal(this.ignis);
+      expect(data).to.equal(null);
+    });
+
+    expect(this.ignis.startup).to.be.fulfilled;
+  });
+
 });
