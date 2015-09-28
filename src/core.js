@@ -125,8 +125,8 @@ Ignis.prototype.listen = function(port) {
    * @param          {fn}        Function exported by the extension module.
    * @returns        {Ignis}     Ignis class for further chaining.
    */
-Ignis.prototype.use = function(fn) {
-  this.wait(() => Ignis.use.call(this, fn));
+Ignis.prototype.use = function(fn, ...args) {
+  this.wait(() => Ignis.use.call(this, fn, ...args));
   return this;
 };
 
@@ -163,14 +163,14 @@ Ignis.init = function(fn) {
  * @param          {fn}        Function exported by the extension module.
  * @returns        {Ignis}     Ignis class for further chaining.
  */
-Ignis.use = function(fn) {
+Ignis.use = function(fn, ...args) {
   /* If fn is a string, load it first */
   if (_.isString(fn)) { fn = Prequire(fn); }
   /* Handle ES6 modules with multiple exports */
-  if (_.isObject(fn) && _.isFunction(fn.default)) { fn = fn.default; }
+  if (fn.__esModule) { fn = fn.default; }
   /* No-op if this extension is already attached */
   if (Ignis[exts].has(fn)) { return Ignis; }
   Ignis[exts].add(fn);
-  fn(Ignis);
+  fn(Ignis, ...args);
   if (this !== Ignis) { this.init(); }
 };
