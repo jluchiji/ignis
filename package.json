@@ -1,6 +1,6 @@
 {
   "name": "ignis",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Rapidly create modular API servers.",
   "main": "lib/index.js",
   "directories": {
