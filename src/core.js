@@ -117,17 +117,32 @@ Ignis.prototype.listen = function(port) {
 };
 
 
-  /**
-   * use(1)
-   *
-   * @access         public
-   * @description                Make Ignis use the extension.
-   * @param          {fn}        Function exported by the extension module.
-   * @returns        {Ignis}     Ignis class for further chaining.
-   */
+/**
+ * use(1)
+ *
+ * @access         public
+ * @description                Make Ignis use the extension.
+ * @param          {fn}        Function exported by the extension module.
+ * @returns        {Ignis}     Ignis class for further chaining.
+ */
 Ignis.prototype.use = function(fn, ...args) {
   this.wait(() => Ignis.use.call(this, fn, ...args));
   return this;
+};
+
+
+/**
+ * env(1)
+ *
+ * @access         public
+ * @description                Checks NODE_ENV against a value.
+ * @param          {name}      RegExp or string describing environment.
+ * @returns        {bool}      True if environment matches.
+ */
+Ignis.prototype.env = function(name) {
+  const env = process.env.NODE_ENV;
+  if (name instanceof RegExp) { return name.test(env); }
+  return name === env;
 };
 
 

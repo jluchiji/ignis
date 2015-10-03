@@ -210,4 +210,24 @@ describe('Ignis Class', function() {
 
   });
 
+  describe('environment flags', function() {
+
+    it('should recognize environment by name', function() {
+      process.env.NODE_ENV = 'test';
+      const ignis = new Ignis();
+
+      expect(ignis.env('test')).to.be.true;
+      expect(ignis.env('foo')).to.be.false;
+    });
+
+    it('should recognize environment by regex', function() {
+      process.env.NODE_ENV = 'test';
+      const ignis = new Ignis();
+
+      expect(ignis.env(/test/)).to.be.true;
+      expect(ignis.env(/foo/)).to.be.false;
+    });
+
+  });
+
 });
