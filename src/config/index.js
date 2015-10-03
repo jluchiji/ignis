@@ -8,7 +8,7 @@
 import _           from 'lodash';
 import Debug       from 'debug';
 import Chalk       from 'chalk';
-import { symbol }  from 'ignis-util';
+import * as Util   from 'ignis-util';
 
 import File        from './file';
 import Envar       from './envar';
@@ -18,7 +18,13 @@ const debug = Debug('ignis:config');
 /*!
  * Export symbols used by config(2).
  */
-const __store = symbol('Ignis::config::store');
+const __store = Util.symbol('Ignis::config::store');
+
+/*!
+ * Regex for envar substitutions.
+ */
+const substPattern = /^\$[A-Z0-9_]+$/;
+
 
 /**
  * config(2)
@@ -41,6 +47,17 @@ export function config(name, value) {
     }
     return old;
   }
+
+  /* Substitute envars as specified */
+  Util.deepForEach(value, (v, k, o) => {
+    if (typeof v === 'string' && substPattern.test(v)) {
+      const key = v.substring(1);
+      const envar = process.env[key];
+      debug(`subst ${key}`);
+      if (!envar) { throw new Error(`Missing envar: ${key}`); }
+      o[k] = envar;
+    }
+  });
 
   /* Otherwise, set the config value */
   _.set(store, name, value);
@@ -67,6 +84,7 @@ export function init() {
   this.config.env = Envar.bind(this);
   this.config.file = File.bind(this);
 }
+
 
 /*!
  * Ignis.js extension

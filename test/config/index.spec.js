@@ -63,4 +63,18 @@ describe('config(2)', function() {
 
   });
 
+  it('should substiture envars', function() {
+    const config = { test: '$NODE_ENV' };
+    this.ignis.config('foo', config);
+
+    const result = this.ignis.config('foo.test');
+    expect(result).to.equal(process.env.NODE_ENV);
+  });
+
+  it('should throw on missing envars', function() {
+    const config = { test: '$NO_SUCH_VAR' };
+
+    expect(() => this.ignis.config('foo', config)).to.throw('Missing envar: NO_SUCH_VAR');
+  });
+
 });
