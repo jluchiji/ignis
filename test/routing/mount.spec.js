@@ -12,15 +12,16 @@ describe('mount(2)', function() {
     this.meta = {
       path: 'POST /test/',
       auth: 'token',
-      handler: function() { }
+      foo: 'bar',
+      handler: Sinon.spy(function() { })
     };
 
     this.ns = {
-      factories: [ function(ignis, options) { return options.auth; } ],
-      mount:     Mount.mount,
-      root: { post: Sinon.spy() }
+      pre: [ function(ignis, options) { return options.auth; } ],
+      post: [ function(ignis, options) { return options.foo; } ],
+      mount: Mount.mount,
+      root: { post: Sinon.spy((path, a, b) => { this.ns.handler = b; }) }
     };
-
   });
 
 
@@ -29,8 +30,11 @@ describe('mount(2)', function() {
 
     const router = this.ns.root.post;
     expect(router).to.be.calledOnce;
-    expect(router).to.be.calledWith('/foo/:bar/test', 'token');
-    expect(router.firstCall.args[2]).to.be.a('function');
+    const args = router.firstCall.args;
+    expect(args[0]).to.equal('/foo/:bar/test');
+    expect(args[1]).to.equal('token');
+    expect(args[2]).to.be.a('function');
+    expect(args[3]).to.equal('bar');
   });
 
   it('should handle endpoint with multiple paths', function() {
@@ -94,6 +98,19 @@ describe('mount(2)', function() {
     expect(router).to.be.calledOnce;
     expect(router).to.be.calledWith('/foo/:bar/test', 'token');
     expect(router.firstCall.args[2]).to.be.a('function');
+  });
+
+  it('should pass in the ignis instance', function(done) {
+    this.ns.mount('/foo/:bar', this.meta);
+    const req = { };
+    const res = { status: () => res, send: () => res };
+
+    this.ns.handler(req, res, err => {
+      expect(this.meta.handler)
+        .to.be.calledOnce.and
+        .to.be.calledWith(this.ns, req);
+      done(err);
+    });
   });
 
 });

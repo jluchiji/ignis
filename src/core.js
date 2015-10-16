@@ -55,7 +55,11 @@ function Ignis(arg) {
   this[init]      = new Set();
   this.root       = Express();
   this.startup    = Bluebird.resolve();
-  this.factories  = [ ];
+  this.pre        = [ ];
+  this.post       = [ ];
+
+  /* Compatibility with ignis 0.1.x */
+  this.factories = this.pre;
 
   this.init();
 }

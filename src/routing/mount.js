@@ -36,7 +36,11 @@ export function mount(path, meta) {
   const handler = meta.handler;
 
   /* Generate the middleware stack */
-  const middleware = _.chain(this.factories)
+  const pre = _.chain(this.pre)
+    .map(factory => factory(this, meta))
+    .compact()
+    .value();
+  const post = _.chain(this.post)
     .map(factory => factory(this, meta))
     .compact()
     .value();
@@ -46,7 +50,8 @@ export function mount(path, meta) {
     throw new Error(
       `Expected handler to be a function but got ${typeof handler}`);
   }
-  middleware.push(expressify(handler, status));
+  const callback = expressify(handler, this, status);
+  const middleware = Array.prototype.concat(pre, callback, post);
 
   /* Mount the middleware stack to the root router */
   const router = this.root;
