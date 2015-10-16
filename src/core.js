@@ -123,6 +123,30 @@ Ignis.prototype.listen = function(port) {
 
 
 /**
+ * load(1)
+ *
+ * @access         public
+ * @description                Make Ignis use the extension.
+ * @param          {fn}        Function exported by the extension module.
+ * @returns        {Ignis}     Ignis class for further chaining.
+ */
+Ignis.prototype.load = function(fn, ...args) {
+  /* If fn is a string, load it first */
+  if (typeof fn === 'string') { fn = Prequire(fn); }
+  /* Handle ES6 modules with multiple exports */
+  if (fn.__esModule) { fn = fn.default; }
+  /* Do nothing if the extension was already used */
+  if (this[exts].has(fn)) { return this; }
+  this[exts].add(fn);
+
+  /* Wait for startup queue to clear, then use the extension */
+  this.wait(() => {
+    fn(this, ...args);
+  });
+  return this;
+};
+
+/**
  * use(1)
  *
  * @access         public
@@ -138,11 +162,7 @@ Ignis.prototype.use = function(fn, ...args) {
   /* Do nothing if the extension was already used */
   if (this[exts].has(fn)) { return this; }
   this[exts].add(fn);
-
-  /* Wait for startup queue to clear, then use the extension */
-  this.wait(() => {
-    fn(this, ...args);
-  });
+  fn(this, ...args);
   return this;
 };
 
