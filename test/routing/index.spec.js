@@ -5,25 +5,17 @@
  * @license MIT
  */
 
-var Sinon          = require('sinon');
-var Chai           = require('chai');
-var Bluebird       = require('bluebird');
-
-Chai.use(require('chai-as-promised'));
-var expect         = Chai.expect;
-
-var Ignis          = require('../../lib/core');
-var target         = require('../../lib/routing/index');
+const Ignis          = dofile('lib/core');
+const target         = dofile('lib/routing/index');
 
 describe('endpoint(2)', function() {
 
   beforeEach(function() {
+    Ignis.use(target);
     this.ignis = new Ignis();
   });
 
   it('should mount the extension', function() {
-    this.ignis.use(target);
-
     return this.ignis.startup.then(() => {
       expect(this.ignis.mount).to.be.a('function');
       expect(this.ignis.endpoint).to.be.a('function');
@@ -31,31 +23,31 @@ describe('endpoint(2)', function() {
   });
 
   it('should mount an endpoint', function() {
-    var fn = Sinon.spy();
+    const fn = Sinon.spy();
     this.ignis.endpoint('/test', fn);
 
-    return expect(this.ignis.startup).to.be.fulfilled.then(i => {
+    return expect(this.ignis.startup).to.be.fulfilled.then(() => {
       expect(fn).to.be.calledOnce.and.to.be.calledWith('/test', this.ignis);
-    })
+    });
   });
 
   it('should handle ES6 module required from CommonJS', function() {
-    var fn = { __esModule: true, default: Sinon.spy() };
+    const fn = { __esModule: true, default: Sinon.spy() };
     this.ignis.endpoint('/test', fn);
 
-    return expect(this.ignis.startup).to.be.fulfilled.then(i => {
+    return expect(this.ignis.startup).to.be.fulfilled.then(() => {
       expect(fn.default).to.be.calledOnce.and.to.be.calledWith('/test', this.ignis);
-    })
+    });
   });
 
 
   it('should not mount an endpoint that is already mounted', function() {
 
-    var fn = Sinon.spy();
+    const fn = Sinon.spy();
     this.ignis.endpoint('/test', fn);
     this.ignis.endpoint('/test2', fn);
 
-    return expect(this.ignis.startup).to.be.fulfilled.then(i => {
+    return expect(this.ignis.startup).to.be.fulfilled.then(() => {
       expect(fn).to.be.calledOnce.and.to.be.calledWith('/test');
     });
 

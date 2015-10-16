@@ -4,25 +4,15 @@
  * @author  Denis-Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-/* jshint -W030 */
-
-var Sinon          = require('sinon');
-var Chai           = require('chai');
-var Bluebird       = require('bluebird');
-
-var Ignis          = require('../../lib/core');
-var Data           = require('../../lib/data');
-
-Chai.use(require('chai-as-promised'));
-var expect         = Chai.expect;
-
+const Ignis          = dofile('lib/core');
+const Data           = dofile('lib/data');
 
 
 describe('source(1)', function() {
 
   beforeEach(function() {
+    Ignis.use(Data);
     this.ignis = new Ignis();
-    this.ignis.use(Data);
   });
 
   it('should provide calling Ignis instance as argument', function() {
@@ -32,10 +22,10 @@ describe('source(1)', function() {
 
   it('should connect if sync callback succeeds', function() {
 
-    var fake = { test: 0 };
-    var promise = this.ignis.source('test', i => fake);
+    const fake = { test: 0 };
+    this.ignis.source('test', () => fake);
 
-    expect(this.ignis.startup).be.fulfilled.then(i => {
+    expect(this.ignis.startup).be.fulfilled.then(() => {
       expect(this.ignis.source('test')).to.equal(fake);
     });
 
@@ -43,20 +33,19 @@ describe('source(1)', function() {
 
   it('should connect if async callback succeeds', function() {
 
-    var fake = { test: 1 };
-    var promise = this.ignis.source('test', () => {
+    const fake = { test: 1 };
+    this.ignis.source('test', () => {
       return Bluebird.resolve(fake);
     });
 
-    expect(this.ignis.startup).be.fulfilled.then(i => {
+    expect(this.ignis.startup).be.fulfilled.then(() => {
       expect(this.ignis.source('test')).to.equal(fake);
     });
 
   });
 
   it('should reject if sync callback fails', function() {
-    var fake = { test: 2 };
-    var promise = this.ignis.source('test', function() {
+    this.ignis.source('test', function() {
       throw new Error('Test Error');
     });
 
@@ -64,8 +53,7 @@ describe('source(1)', function() {
   });
 
   it('should reject if async callback fails', function() {
-    var fake = { test: 2 };
-    var promise = this.ignis.source('test', function() {
+    this.ignis.source('test', function() {
       return Bluebird.reject(new Error('Test Error'));
     });
 
@@ -73,9 +61,9 @@ describe('source(1)', function() {
   });
 
   it('should reject on attempt to overwrite the connection', function() {
-    var fake = { test: 4 };
+    const fake = { test: 4 };
     this.ignis.source('test', function() { return fake; });
-    expect(this.ignis.startup).be.fulfilled.then(i => {
+    expect(this.ignis.startup).be.fulfilled.then(() => {
       this.ignis.source('test', () => { return { test: 5 }; });
       expect(this.ignis.startup).to.be.rejectedWith('Data source exists: test');
     });
@@ -83,7 +71,7 @@ describe('source(1)', function() {
 
   it('should correctly pass parameters to the callback', function() {
 
-    var fake = { foo: 'bar' };
+    const fake = { foo: 'bar' };
     this.ignis.source('test', (i, a, b) => {
       expect(i).to.equal(this.ignis);
       expect(a).to.equal(0);
@@ -104,7 +92,7 @@ describe('source(1)', function() {
   });
 
   it('should throw if data source is not found', function() {
-    expect(i => {
+    expect(() => {
       this.ignis.source('no-such-source');
     }).to.throw('Data source not found: no-such-source');
   });

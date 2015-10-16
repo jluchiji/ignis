@@ -51,6 +51,7 @@ function Ignis(arg) {
   }
 
   /* Otherwise, this is a class constructor. */
+  this[exts]      = new Set();
   this[init]      = new Set();
   this.root       = Express();
   this.startup    = Bluebird.resolve();
@@ -126,7 +127,18 @@ Ignis.prototype.listen = function(port) {
  * @returns        {Ignis}     Ignis class for further chaining.
  */
 Ignis.prototype.use = function(fn, ...args) {
-  this.wait(() => Ignis.use.call(this, fn, ...args));
+  /* If fn is a string, load it first */
+  if (typeof fn === 'string') { fn = Prequire(fn); }
+  /* Handle ES6 modules with multiple exports */
+  if (fn.__esModule) { fn = fn.default; }
+  /* Do nothing if the extension was already used */
+  if (this[exts].has(fn)) { return this; }
+  this[exts].add(fn);
+
+  /* Wait for startup queue to clear, then use the extension */
+  this.wait(() => {
+    fn(this, ...args);
+  });
   return this;
 };
 

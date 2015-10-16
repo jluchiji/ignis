@@ -4,14 +4,9 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-var Sinon          = require('sinon');
-var Chai           = require('chai');
 
-Chai.use(require('chai-as-promised'));
-var expect         = Chai.expect;
-
-var Ignis          = require('../lib/core');
-var extension      = require('../lib/error');
+const Ignis     = dofile('lib/core');
+const extension = dofile('lib/error');
 
 
 describe('IgnisError', function() {
@@ -19,7 +14,7 @@ describe('IgnisError', function() {
   describe('#constructor', function() {
 
     it('should create an IgnisError object', function() {
-      var err = new extension.IgnisError(123, 'test', { foo: 'bar' });
+      const err = new extension.IgnisError(123, 'test', { foo: 'bar' });
 
       expect(err).to.be.an.instanceOf(Error);
       expect(err).to.have.property('name', 'IgnisError');
@@ -29,7 +24,7 @@ describe('IgnisError', function() {
     });
 
     it('should add sensitive flag if one is given in details', function() {
-      var err = new extension.IgnisError(123, 'test', { sensitive: true });
+      const err = new extension.IgnisError(123, 'test', { sensitive: true });
       expect(err).to.have.property('sensitive', true);
     });
 
@@ -56,7 +51,7 @@ describe('IgnisError', function() {
   describe('extension', function() {
 
     it('should mount the extension', function() {
-      let instance = new Ignis();
+      const instance = new Ignis();
       instance.use(extension);
 
       return expect(instance.startup).to.be.fulfilled.then(function() {

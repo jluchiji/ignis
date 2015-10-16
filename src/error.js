@@ -78,6 +78,8 @@ export class IgnisError extends Error {
  * Extension
  */
 export default function ignisError(Ignis) {
+  if (typeof Ignis !== 'function') { Ignis = Ignis.constructor; }
+
   _.assign(Ignis.prototype, {
     deny:     IgnisError.deny,
     panic:    IgnisError.panic,

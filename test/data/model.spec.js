@@ -4,24 +4,17 @@
  * @author  Denis-Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-/* jshint -W030 */
 
-const Sinon          = require('sinon');
-const Chai           = require('chai');
-
-const Ignis          = require('../../lib/core');
-const Data           = require('../../lib/data');
-
-Chai.use(require('chai-as-promised'));
-const expect         = Chai.expect;
+const Ignis          = dofile('lib/core');
+const Data           = dofile('lib/data');
 
 
 describe('model(2)', function() {
 
   beforeEach(function() {
+    Ignis.use(Data);
     this.source = { test: Sinon.spy() };
     this.ignis = new Ignis();
-    this.ignis.use(Data);
 
     this.ignis.source('test-data', () => this.source);
     return this.ignis.startup;

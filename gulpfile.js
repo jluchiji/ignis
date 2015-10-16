@@ -4,104 +4,109 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-/* eslint-disable no-var */
 
-var fs             = require('fs');
-var gulp           = require('gulp');
-var babel          = require('gulp-babel');
-var mocha          = require('gulp-mocha');
-var eslint         = require('gulp-eslint');
-var enforce        = require('gulp-istanbul-enforcer');
-var istanbul       = require('gulp-istanbul');
-var sourcemaps     = require('gulp-sourcemaps');
+const gulp         = require('gulp');
 
-var config         = require('./package.json');
-
-var eslintrc        = JSON.parse(fs.readFileSync('.eslintrc', 'utf8'));
-
-
-require('mocha-babel');
+const fs           = require('fs');
+const del          = require('del');
+const babel        = require('gulp-babel');
+const mocha        = require('gulp-mocha');
+const eslint       = require('gulp-eslint');
+const notify       = require('gulp-notify');
+const changed      = require('gulp-changed');
+const istanbul     = require('gulp-istanbul');
+const sourcemaps   = require('gulp-sourcemaps');
 
 /*!
- * Transpile ES6 source files into ES5.
+ * Load plugin configuration files.
  */
-gulp.task('build', ['lint'], function() {
+const eslintrc     = JSON.parse(fs.readFileSync('.eslintrc', 'utf8'));
+const babelrc      = JSON.parse(fs.readFileSync('.babelrc',  'utf8'));
 
-  return gulp.src(['src/**/*.{js,es6}'], { base: 'src' })
-    .pipe(sourcemaps.init())
-    .pipe(babel(config.babel))
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('lib'));
+/*!
+ * Default build target.
+ */
+gulp.task('default', [ 'test' ]);
 
+
+/*!
+ * Delete previous builds.
+ */
+gulp.task('clean', function() {
+  return del([ 'lib/**' ]);
 });
+
+
+/*!
+ * Incremental build (use with watch).
+ */
+const build = function() {
+
+  return gulp.src(['src/**/*.js'], { base: 'src' })
+    .pipe(changed('lib'))
+    .pipe(sourcemaps.init())
+    .pipe(babel(babelrc))
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest('lib'))
+    .pipe(notify({ message: 'Build Successful', onLast: true }));
+
+};
+gulp.task('build', ['lint'], build);
+gulp.task('rebuild', [ 'relint' ], build);
+
 
 /*!
  * Lint all source files.
  */
-gulp.task('lint', function() {
+const lint = function() {
 
   return gulp.src(['src/**/*.js'])
-  .pipe(eslint(eslintrc))
-  .pipe(eslint.format())
-  .pipe(eslint.failAfterError());
+    .pipe(changed('lib'))
+    .pipe(eslint(eslintrc))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 
-});
+};
+gulp.task('lint', lint);
+gulp.task('relint', ['clean'], lint);
+
 
 /*!
  * Run the test suit.
  */
-gulp.task('test', ['lint'], function() {
+gulp.task('test', ['build'], function() {
 
-  return gulp.src(['test/index.spec.js'], { read: false })
-    .pipe(mocha({
-      reporter: 'spec',
-      compilers: { js: 'babel' }
-    }));
+  gulp.src([ 'test/index.spec.js' ], { read: false })
+  .pipe(mocha({ reporter: 'spec' }));
 
 });
 
+
 /*!
- * Generate test coverage report.
+ * Test coverage.
  */
 gulp.task('coverage', ['build'], function(done) {
 
   gulp.src(['lib/**/*.js'])
-  .pipe(istanbul())
-  .pipe(istanbul.hookRequire())
-  .on('finish', function() {
-    gulp.src(['test/index.spec.js'])
-      .pipe(mocha({
-        compilers: { js: 'babel' }
-      }))
-      .pipe(istanbul.writeReports({
-        dir: 'coverage',
-        reportOpts: { dir: 'coverage' },
-        reporters: ['text-summary', 'html', 'lcov']
-      }))
-      .on('end', done);
-  });
+    .pipe(istanbul())
+    .pipe(istanbul.hookRequire())
+    .on('finish', function() {
+      gulp.src(['test/index.spec.js'])
+        .pipe(mocha())
+        .pipe(istanbul.writeReports({
+          dir: 'coverage',
+          reportOpts: { dir: 'coverage' },
+          reporters: ['text-summary', 'html', 'lcov']
+        }))
+        .on('end', done);
+    });
 
 });
 
-gulp.task('coverage:enforce', ['coverage'], function() {
-  var options = {
-    thresholds : {
-      statements : 100,
-      branches : 100,
-      lines : 100,
-      functions : 100
-    },
-    coverageDirectory : 'coverage',
-    rootDirectory : ''
-  };
-  return gulp
-    .src('.')
-    .pipe(enforce(options));
-});
 
 /*!
- * Watch
+ * Automatically rebuild on save.
  */
-gulp.task('watch', function() {
-  gulp.watch('src/**/*.{js,es6}', ['build']);
+gulp.task('watch', ['rebuild'], function() {
+  gulp.watch('src/**/*.js', ['build']);
 });

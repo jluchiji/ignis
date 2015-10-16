@@ -4,23 +4,16 @@
  * @author  Denis-Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-/* jshint -W030 */
 
-var Sinon          = require('sinon');
-var Chai           = require('chai');
-var Bluebird       = require('bluebird');
+const Data           = dofile('lib/data');
+const Ignis          = dofile('lib/core');
 
-var Data           = require('../../lib/data');
-var Ignis          = require('../../lib/core');
-
-Chai.use(require('chai-as-promised'));
-var expect         = Chai.expect;
 
 describe('extension', function() {
 
   it('should mount the extension', function() {
-    var ignis = new Ignis();
-    ignis.use(Data);
+    Ignis.use(Data);
+    const ignis = new Ignis();
 
     return ignis.startup.then(() => {
       expect(ignis.source).to.be.a('function');

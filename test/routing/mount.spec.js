@@ -4,15 +4,7 @@
  * @author  Denis-Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-
-var Sinon          = require('sinon');
-var Chai           = require('chai');
-var Bluebird       = require('bluebird');
-
-Chai.use(require('chai-as-promised'));
-var expect         = Chai.expect;
-
-var Mount          = require('../../lib/routing/mount');
+const Mount          = dofile('lib/routing/mount');
 
 describe('mount(2)', function() {
 
@@ -35,7 +27,7 @@ describe('mount(2)', function() {
   it('should create and mount a middleware stack', function() {
     this.ns.mount('/foo/:bar', this.meta);
 
-    var router = this.ns.root.post;
+    const router = this.ns.root.post;
     expect(router).to.be.calledOnce;
     expect(router).to.be.calledWith('/foo/:bar/test', 'token');
     expect(router.firstCall.args[2]).to.be.a('function');
@@ -98,7 +90,7 @@ describe('mount(2)', function() {
 
     this.ns.mount('/foo/:bar', this.meta);
 
-    var router = this.ns.root.post;
+    const router = this.ns.root.post;
     expect(router).to.be.calledOnce;
     expect(router).to.be.calledWith('/foo/:bar/test', 'token');
     expect(router.firstCall.args[2]).to.be.a('function');

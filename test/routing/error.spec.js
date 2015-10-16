@@ -5,42 +5,35 @@
  * @license MIT
  */
 
-var Sinon          = require('sinon');
-var Chai           = require('chai');
-var Bluebird       = require('bluebird');
-
-Chai.use(require('chai-as-promised'));
-var expect         = Chai.expect;
-
-var target         = require('../../lib/routing/error');
+const target         = dofile('lib/routing/error');
 
 describe('handler(1)', function() {
 
   it('should create a handler function', function() {
-    let mw = target.handler('Error');
+    const mw = target.handler('Error');
     expect(mw).to.be.a.function;
   });
 
   it('should generate handler specific to the error type', function() {
-    let cb = Sinon.spy();
-    let mw = target.handler('TypeError', cb);
+    const cb = Sinon.spy();
+    const mw = target.handler('TypeError', cb);
 
-    let req = Object.create(null);
-    let res = Object.create(null);
-    let err = new TypeError();
+    const req = Object.create(null);
+    const res = Object.create(null);
+    const err = new TypeError();
     mw(err, req, res, function() { });
 
     expect(cb).to.be.calledOnce.and.calledWith(err, req, res);
   });
 
   it('should generate handler that is no-op for wrong error type', function() {
-    let cb = Sinon.spy();
-    let mw = target.handler('TypeError', cb);
+    const cb = Sinon.spy();
+    const mw = target.handler('TypeError', cb);
 
-    let req  = Object.create(null);
-    let res  = Object.create(null);
-    let err  = new Error();
-    let next = Sinon.spy();
+    const req  = Object.create(null);
+    const res  = Object.create(null);
+    const err  = new Error();
+    const next = Sinon.spy();
     mw(err, req, res, next);
 
     expect(cb).not.to.be.called;

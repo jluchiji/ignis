@@ -4,26 +4,18 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-/* jshint -W030 */
 
-var Sinon          = require('sinon');
-var Chai           = require('chai');
-var Bluebird       = require('bluebird');
-
-Chai.use(require('chai-as-promised'));
-var expect         = Chai.expect;
-
-var Ignis          = require('../../lib/core');
-var target         = require('../../lib/config/index');
+const Ignis          = dofile('lib/core');
+const target         = dofile('lib/config');
 
 describe('config(2)', function() {
 
   beforeEach(function() {
+    Ignis.use(target);
     this.ignis = new Ignis();
   });
 
   it('should mount to a namespace', function() {
-    this.ignis.use(target);
     return this.ignis.startup.then(() => {
       expect(this.ignis.config).to.be.a('function').and.equal(target.config);
     });
@@ -31,20 +23,20 @@ describe('config(2)', function() {
 
   it('should get/set the config value', function() {
     this.ignis.config('foo', 'bar');
-    var result = this.ignis.config('foo');
+    const result = this.ignis.config('foo');
 
     expect(result).to.equal('bar');
   });
 
   it('should support get/set with deep paths', function() {
     this.ignis.config('a.b.c.bar', 'foo');
-    var result = this.ignis.config('a');
+    const result = this.ignis.config('a');
 
     expect(result).to.deep.equal({ b: { c: { bar: 'foo' } } });
   });
 
   it('should throw when getting an undefined config', function() {
-    expect(i => {
+    expect(() => {
       this.ignis.config('foo');
     }).to.throw('Config option \'foo\' is not defined.');
   });
@@ -63,7 +55,7 @@ describe('config(2)', function() {
 
   });
 
-  it('should substiture envars', function() {
+  it('should substiture enconsts', function() {
     const config = { test: '$NODE_ENV' };
     this.ignis.config('foo', config);
 
@@ -71,10 +63,10 @@ describe('config(2)', function() {
     expect(result).to.equal(process.env.NODE_ENV);
   });
 
-  it('should throw on missing envars', function() {
-    const config = { test: '$NO_SUCH_VAR' };
+  it('should throw on missing enconsts', function() {
+    const config = { test: '$NO_SUCH_CONST' };
 
-    expect(() => this.ignis.config('foo', config)).to.throw('Missing envar: NO_SUCH_VAR');
+    expect(() => this.ignis.config('foo', config)).to.throw('Missing envar: NO_SUCH_CONST');
   });
 
 });

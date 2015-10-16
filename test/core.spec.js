@@ -4,16 +4,8 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
-/* jshint -W030 */
 
-const Sinon          = require('sinon');
-const Chai           = require('chai');
-const Bluebird       = require('bluebird');
-
-Chai.use(require('chai-as-promised'));
-const expect         = Chai.expect;
-
-const Ignis          = require('../lib/core');
+const Ignis = dofile('lib/core');
 
 describe('Ignis Class', function() {
 
@@ -44,7 +36,7 @@ describe('Ignis Class', function() {
 
   });
 
-  describe('use(1)', function() {
+  describe('static use(1)', function() {
 
     const callback = Sinon.spy();
 
@@ -64,19 +56,8 @@ describe('Ignis Class', function() {
       expect(extension.default).to.be.calledOnce;
     });
 
-    it('should proxy instance use() to static use()', function() {
-      const extension = Sinon.spy(function(i) {
-        expect(this).not.to.be.null;
-        expect(i).to.equal(Ignis);
-      });
-
-      const ignis = new Ignis();
-      ignis.use(extension);
-    });
-
     it('should be able to auto load peer modules', function() {
-      const ignis = new Ignis();
-      ignis.use('no-op');
+      Ignis.use('no-op');
     });
 
     it('should forward arguments to the extension function', function() {
@@ -85,6 +66,41 @@ describe('Ignis Class', function() {
 
       Ignis.use(extension, argument);
       expect(extension).to.be.calledOnce.and.calledWith(Ignis, argument);
+    });
+
+  });
+
+  describe('use(1)', function() {
+
+    beforeEach(function() { this.ignis = new Ignis(); });
+
+    it('should attach extension to instance only', function() {
+      const callback = Sinon.spy(function(i) { i.foo = true; });
+
+      this.ignis.use(callback);
+
+      return this.ignis.startup.then(() => {
+        const another = new Ignis();
+        expect(another.foo).not.to.exist;
+        expect(this.ignis.foo).to.be.true;
+        expect(callback).to.be.calledOnce.and.to.be.calledWith(this.ignis);
+      });
+    });
+
+    it('should not attach an extension that is already attached', function() {
+      const callback = Sinon.spy();
+
+      this.ignis.use(callback);
+      this.ignis.use(callback);
+
+      return this.ignis.startup.then(() => {
+        expect(callback).to.be.calledOnce;
+      });
+    });
+
+    it('should be able to auto load peer modules', function() {
+      this.ignis.use('no-op');
+      return this.ignis.startup;
     });
 
   });
