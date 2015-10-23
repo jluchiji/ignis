@@ -44,6 +44,17 @@ describe('source(1)', function() {
 
   });
 
+  it('should handle ES6 module', function() {
+
+    const fake = { test: 0 };
+    this.ignis.source('test', { __esModule: true, default: () => fake });
+
+    expect(this.ignis.startup).be.fulfilled.then(() => {
+      expect(this.ignis.source('test')).to.equal(fake);
+    });
+
+  });
+
   it('should reject if sync callback fails', function() {
     this.ignis.source('test', function() {
       throw new Error('Test Error');

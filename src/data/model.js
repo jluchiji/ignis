@@ -35,11 +35,13 @@ export function model(name, source, callback) {
   const store = this[__models];
 
   /* Get the model with the specified name if callback is not specified. */
-  if (typeof callback !== 'function') {
+  if (!callback) {
     const result = store.get(name);
     if (!result) { throw new Error(`Model not found: ${name}`); }
     return result;
   }
+
+  if (callback.__esModule) { callback = callback.default; }
 
   /* Otherwise, create a new model. */
   this.wait(function() {

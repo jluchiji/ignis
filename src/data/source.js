@@ -32,11 +32,13 @@ export function source(name, callback, ...args) {
   const store = this[__sources];
 
   /* If callback is not specified, retrieve the source. */
-  if (typeof callback !== 'function') {
+  if (!callback) {
     const result = store.get(name);
     if (!result) { throw new Error(`Data source not found: ${name}`); }
     return result;
   }
+
+  if (callback.__esModule) { callback = callback.default; }
 
   /* Otherwise, create the data source */
   this.wait(function() {
