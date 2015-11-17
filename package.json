@@ -1,7 +1,7 @@
 {
   "name": "ignis",
   "description": "Modular RESTful API server",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "homepage": "https://github.com/jluchiji/ignis",
   "author": {
     "name": "Denis Luchkin-Zhou",
