@@ -5,6 +5,9 @@
  * @license MIT
  */
 
+import _           from 'lodash';
+
+
 /* Symbol to hide service metadata */
 const $$metadata = Symbol();
 
@@ -63,6 +66,25 @@ export default class Service {
     };
   }
 
+
+  /**
+   * @static (decorator) Exports a static member to Ignis.prototype
+   */
+  static export(options = { }) {
+    return function(target, name) {
+      if (!(target.prototype instanceof Service)) {
+        throw new Error('@export must be called on static Ignis.Service members');
+      }
+      const list = Service.meta(target, 'exports') || { };
+
+      /* Disallow duplicate definitions */
+      if (list[name]) { throw new Error(`Duplicate export: ${name}`); }
+
+      /* Add options to metadata */
+      list[name] = _.defaults(options, { readonly: false, enumerable: true });
+      Service.meta(target, 'exports', list);
+    };
+  }
 
 }
 

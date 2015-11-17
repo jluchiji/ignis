@@ -5,7 +5,9 @@
  * @license MIT
  */
 
-const Bluebird = require('bluebird');
+
+const Express = require('express');
+const Ignis = dofile('./lib/core');
 const HttpService = dofile('./lib/services/http');
 
 describe('Ignis.HttpService', function() {
@@ -18,7 +20,8 @@ describe('Ignis.HttpService', function() {
   });
 
   beforeEach(function() {
-    this.ignis.init = Sinon.spy(() => Bluebird.resolve());
+    this.ignis = new Ignis();
+    this.ignis.init = Sinon.spy(this.ignis.init);
     this.http = new HttpService(this.ignis);
   });
 
@@ -186,22 +189,50 @@ describe('Ignis.HttpService', function() {
 
   describe('listen(port)', function() {
 
-    beforeEach(function() {
-      this.cb = Sinon.spy((port, done) => done());
-      this.http.router.listen = this.cb;
+    before(function() {
+      HttpService._listen = HttpService.listen;
+      Express.application._listen = Express.application.listen;
     });
 
-    it('should start the initialization process', co(function*() {
+    beforeEach(function() {
+      HttpService.listen = Sinon.spy(HttpService._listen);
+      Express.application.listen = Sinon.spy((port, done) => done());
+    });
 
-      yield this.http.listen(3000);
+    after(function() {
+      HttpService.listen = HttpService._listen;
+      delete HttpService._listen;
+      Express.application.listen = Express.application._listen;
+      delete Express.application._listen;
+    });
+
+    it('should call the express app.listen() with port', co(function*() {
+
+      this.ignis.use(HttpService);
+      yield this.ignis.init();
+
+      yield this.ignis.listen(3000);
 
       expect(this.ignis.init)
         .to.be.calledOnce;
 
-      expect(this.cb)
+      expect(Express.application.listen)
         .to.be.calledOnce
         .to.be.calledWith(3000);
 
+    }));
+
+    it('should initialize application', co(function*() {
+
+      this.ignis.use(HttpService);
+      yield this.ignis.listen(3000);
+
+      expect(this.ignis.init)
+        .to.be.calledOnce;
+
+      expect(Express.application.listen)
+        .to.be.calledOnce
+        .to.be.calledWith(3000);
     }));
 
   });

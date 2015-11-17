@@ -63,7 +63,6 @@ export default class HttpService extends Service {
 
     this.ignis.mount = this.mount;
     this.ignis.error = this.error;
-    this.ignis.listen = this.listen;
   }
 
 
@@ -161,32 +160,34 @@ export default class HttpService extends Service {
   /**
    * Listen.
    */
-  @autobind
-  async listen(port) {
+  @Service.export({ readonly: true })
+  static async listen(port) {
 
     debug(Chalk.bold.yellow('start') + ' initialization');
     const time = new Date().getTime();
 
     /* If not already initialized, start the init process */
-    if (!this.ignis.startup) {
-      this.ignis.startup = this.ignis.init();
+    if (!this.startup) {
+      this.startup = this.init();
     }
 
     /* Wait for startup to finish */
-    await this.ignis.startup;
+    await this.startup;
 
     /* Use $PORT if provided */
     port = process.env.PORT || port;
 
     /* Start listening */
     return Bluebird.fromNode(done => {
-      this.router.listen(port, done);
+      this.service('http').router.listen(port, done);
     }).tap(() => {
       const delta = new Date().getTime() - time;
       debug(Chalk.bold.green('success') + ` initialization - ${delta}ms`);
     });
 
   }
+
+
 }
 
 

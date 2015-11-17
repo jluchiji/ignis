@@ -29,6 +29,8 @@ describe('Ignis.Core', function() {
 
     this.derived = function TestService() { };
     this.derived.prototype = new Service(this.ignis);
+    this.derived.hello = Sinon.spy();
+    this.derived.world = Sinon.spy();
 
     this.ignis.use(() => { });
   });
@@ -69,6 +71,34 @@ describe('Ignis.Core', function() {
     it('should fail if argument is not a Service or a function', function() {
       expect(() => this.ignis.use({ }))
         .to.throw('Unexpected service type.');
+    });
+
+    it('should attach service exports to Ignis.prototype', function() {
+
+      Service.export()(this.derived, 'hello');
+      this.ignis.use(this.derived);
+
+      expect(Ignis.prototype)
+        .to.have.property('hello')
+        .that.is.a('function');
+
+      Ignis.prototype.hello();
+
+      expect(this.derived.hello)
+        .to.be.calledOnce;
+
+    });
+
+    it('should pass on assigments to actual exports if not readonly', function() {
+
+      Service.export()(this.derived, 'world');
+      this.ignis.use(this.derived);
+
+      this.ignis.world = 'test';
+
+      expect(this.derived.world)
+        .to.equal('test');
+
     });
 
   });

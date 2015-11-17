@@ -51,7 +51,7 @@ describe('Ignis.Service', function() {
 
   });
 
-  describe('deps(...deps)', function() {
+  describe('@deps(...deps)', function() {
 
     it('should attach deps info to Service', function() {
 
@@ -61,6 +61,41 @@ describe('Ignis.Service', function() {
 
       expect(actual)
         .to.deep.equal(['foo', 'bar']);
+
+    });
+
+  });
+
+  describe('@export', function() {
+
+    it('should add member to export list', function() {
+
+      Service.export()(this.derived, 'foo');
+
+      const actual = Service.meta(this.derived, 'exports');
+
+      expect(actual)
+        .to.have.property('foo')
+        .that.deep.equals({ enumerable: true, readonly: false });
+
+    });
+
+    it('should throw when called on non-static member', function() {
+      const instance = new this.derived(this.ignis);
+      instance.hello = 'world';
+
+      expect(() => {
+        Service.export()(instance, 'hello');
+      }).to.throw('@export must be called on static Ignis.Service members');
+
+    });
+
+    it('should fail when atempting to perform duplicate export', function() {
+
+      Service.export()(this.derived, 'foo');
+      expect(() => {
+        Service.export()(this.derived, 'foo');
+      }).to.throw('Duplicate export: foo');
 
     });
 

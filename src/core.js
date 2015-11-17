@@ -5,6 +5,8 @@
  * @license MIT
  */
 
+/* eslint no-loop-func:0 */
+
 import _           from 'lodash';
 import Debug       from 'debug';
 import Chalk       from 'chalk';
@@ -46,8 +48,30 @@ export default class Ignis extends Monologue {
 
     /* If this is a Service, register it */
     if (service.prototype instanceof Service) {
+
+      if (Ignis[$$services].has(service)) {
+        debug(Chalk.bold.cyan('skip') + ` ${service.name}`);
+        return;
+      }
+
       debug(Chalk.bold.cyan('register') + ` ${service.name}`);
       Ignis[$$services].add(service);
+
+      /* Register exports */
+      const exps = Service.meta(service, 'exports') || { };
+      _.forEach(exps, (options, name) => {
+        debug(Chalk.bold.yellow('export ') + name);
+        debug(options);
+
+        const descriptor = {
+          configurable: false,
+          enumerable: options.enumerable,
+          readonly: options.readonly,
+          get: () => service[name],
+          set: options.readonly ? undefined : v => { service[name] = v; }
+        };
+        Object.defineProperty(Ignis.prototype, name, descriptor);
+      });
       return;
     }
 
@@ -91,8 +115,19 @@ export default class Ignis extends Monologue {
 
   /**
    * Initializes all registered services.
+   * Wraps the __init().
    */
-  async init() {
+  init() {
+    this.startup = this.__init();
+    return this.startup;
+  }
+
+
+  /**
+   * @private Actual initialization function.
+   * Do not call yourself, or you can seriously mess up the startup sequence.
+   */
+  async __init() {
 
     /* Prepare to toposort */
     const graph = [ ];
