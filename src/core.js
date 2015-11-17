@@ -104,8 +104,10 @@ export default class Ignis {
       /* Push dependency info into toposort */
       const deps = Service.meta(service, 'deps') || [ ];
       for (const dep of deps) { graph.push([ dep, name ]); }
+      if (deps.length === 0) { graph.push([ name ]); }
     }
-    const sorted = Toposort(graph);
+    const sorted = _.compact(Toposort(graph));
+    debug(sorted);
 
     /* Initialize services */
     for (const name of sorted) {
