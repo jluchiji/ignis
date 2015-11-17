@@ -6,6 +6,7 @@
  */
 
 import _           from 'lodash';
+import CORS        from 'cors';
 import Path        from 'path';
 import Debug       from 'debug';
 import Chalk       from 'chalk';
@@ -58,6 +59,8 @@ export default class HttpService extends Service {
    * Attach conveniece functions to Ignis root.
    */
   postinit() {
+    this.router.use(CORS());
+
     this.ignis.mount = this.mount;
     this.ignis.error = this.error;
     this.ignis.listen = this.listen;
