@@ -125,6 +125,15 @@ describe('Ignis.ConfigService', function() {
 
     }));
 
+    it('should not throw even if auto-load fails', co(function*() {
+
+      process.env.CONFIG_PREFIX = 'test/.fixtures/fake';
+      this.config = new ConfigService(this.ignis);
+
+      yield this.config.init();
+
+    }));
+
   });
 
   describe('postinit()', function() {

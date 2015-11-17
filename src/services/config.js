@@ -26,11 +26,6 @@ const $$data = Symbol();
 const substPattern = /^\$[A-Z0-9_]+$/;
 
 
-/* Config prefix */
-/* istanbul ignore next */
-const configPrefix = process.env.CONFIG_PREFIX || 'config';
-
-
 /**
  * ConfigService class.
  * Configuration manager.
@@ -40,6 +35,11 @@ export default class ConfigService extends Service {
 
   constructor(ignis) {
     super(ignis);
+
+    /* Config prefix */
+    /* istanbul ignore next */
+    const configPrefix = process.env.CONFIG_PREFIX || 'config';
+
     this[$$data] = { };
     this.root = Path.join(AppRoot.toString(), configPrefix);
   }
@@ -48,22 +48,15 @@ export default class ConfigService extends Service {
    * Initialize.
    * Loads all files in $APP_ROOT_PATH/config directory.
    */
-  async init() {
-
-    try {
-      await new Bluebird(resolve => {
-
-        Walker(this.root)
-          .on('file', i => this.file(i))
-          .on('end', () => resolve());
-
-      });
-    } catch (error) {
-      /* eslint-disable */
-      console.warn('Failed to auto-load config files: ' + error.message);
-      /* eslint-enable */
-    }
-
+  init() {
+    return new Bluebird((resolve, reject) => {
+      Walker(this.root)
+        .on('file', i => this.file(i))
+        .on('error', reject)
+        .on('end', () => resolve());
+    }).catch(error => {
+      debug(Chalk.bold.red('fail ') + error.message);
+    });
   }
 
 

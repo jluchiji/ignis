@@ -5,6 +5,7 @@
  * @license MIT
  */
 
+const Bluebird = require('bluebird');
 const HttpService = dofile('./lib/services/http');
 
 describe('Ignis.HttpService', function() {
@@ -17,6 +18,7 @@ describe('Ignis.HttpService', function() {
   });
 
   beforeEach(function() {
+    this.ignis.init = Sinon.spy(() => Bluebird.resolve());
     this.http = new HttpService(this.ignis);
   });
 
@@ -179,6 +181,28 @@ describe('Ignis.HttpService', function() {
         .to.be.calledWith(err2);
 
     });
+
+  });
+
+  describe('listen(port)', function() {
+
+    beforeEach(function() {
+      this.cb = Sinon.spy((port, done) => done());
+      this.http.router.listen = this.cb;
+    });
+
+    it('should start the initialization process', co(function*() {
+
+      yield this.http.listen(3000);
+
+      expect(this.ignis.init)
+        .to.be.calledOnce;
+
+      expect(this.cb)
+        .to.be.calledOnce
+        .to.be.calledWith(3000);
+
+    }));
 
   });
 

@@ -10,9 +10,14 @@ import Path        from 'path';
 import Debug       from 'debug';
 import Chalk       from 'chalk';
 import Express     from 'express';
+import Bluebird    from 'bluebird';
 import Service     from '../service';
 import expressify  from '../util/expressify';
 import errorIs     from '../util/error-is';
+import {
+  autobind
+}                  from 'core-decorators';
+
 
 const debug = Debug('ignis:http');
 
@@ -53,11 +58,9 @@ export default class HttpService extends Service {
    * Attach conveniece functions to Ignis root.
    */
   postinit() {
-    const mount = this.mount;
-    this.ignis.mount = this::mount;
-
-    const error = this.error;
-    this.ignis.error = this::error;
+    this.ignis.mount = this.mount;
+    this.ignis.error = this.error;
+    this.ignis.listen = this.listen;
   }
 
 
@@ -80,6 +83,7 @@ export default class HttpService extends Service {
   /**
    * Mounts an HTTP endpoint to the application root.
    */
+  @autobind
   mount(path, meta) {
 
     /* Unwrap ES6 modules */
@@ -137,6 +141,7 @@ export default class HttpService extends Service {
   /**
    * Mounts an error handler to the application root.
    */
+  @autobind
   error(guard, callback) {
     const handler = function(err, req, res, next) {
       if (errorIs(err, guard)) {
@@ -149,6 +154,36 @@ export default class HttpService extends Service {
     this.router.use(handler);
   }
 
+
+  /**
+   * Listen.
+   */
+  @autobind
+  async listen(port) {
+
+    debug(Chalk.bold.yellow('start') + ' initialization');
+    const time = new Date().getTime();
+
+    /* If not already initialized, start the init process */
+    if (!this.ignis.startup) {
+      this.ignis.startup = this.ignis.init();
+    }
+
+    /* Wait for startup to finish */
+    await this.ignis.startup;
+
+    /* Use $PORT if provided */
+    port = process.env.PORT || port;
+
+    /* Start listening */
+    return Bluebird.fromNode(done => {
+      this.router.listen(port, done);
+    }).tap(() => {
+      const delta = new Date().getTime() - time;
+      debug(Chalk.bold.green('success') + ` initialization - ${delta}ms`);
+    });
+
+  }
 }
 
 
