@@ -22,3 +22,5 @@ global.Sinon       = require('sinon');
  */
 require('./service.spec.js');
 require('./core.spec.js');
+
+require('./services/http.spec.js');
