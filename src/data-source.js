@@ -7,7 +7,8 @@
 
 import Service     from './service';
 
-
-export default class DataSource extends Service {
-
-}
+/**
+ * DataSource class to differentiate data-related services from
+ * ordinary services.
+ */
+export default class DataSource extends Service { }
