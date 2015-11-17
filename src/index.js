@@ -18,7 +18,7 @@ let instance = new Core();
 
 
 /* Singleton function */
-exports = exports = function Ignis() {
+exports = module.exports = function Ignis() {
   return instance;
 };
 

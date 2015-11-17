@@ -50,13 +50,19 @@ export default class ConfigService extends Service {
    */
   async init() {
 
-    await new Bluebird(resolve => {
+    try {
+      await new Bluebird(resolve => {
 
-      Walker(this.root)
-        .on('file', i => this.file(i))
-        .on('end', () => resolve());
+        Walker(this.root)
+          .on('file', i => this.file(i))
+          .on('end', () => resolve());
 
-    });
+      });
+    } catch (error) {
+      /* eslint-disable */
+      console.warn('Failed to auto-load config files: ' + error.message);
+      /* eslint-enable */
+    }
 
   }
 
