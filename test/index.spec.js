@@ -14,8 +14,11 @@ Chai.use(require('chai-as-promised'));
  */
 global.co          = require('bluebird').coroutine;
 global.expect      = Chai.expect;
+global.dofile      = require('app-root-path').require;
 global.Sinon       = require('sinon');
 
 /*!
  * Start tests.
  */
+require('./service.spec.js');
+require('./core.spec.js');

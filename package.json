@@ -14,10 +14,11 @@
   "bugs": {
     "url": "https://github.com/jluchiji/ignis/issues"
   },
-  "files": [ "lib" ],
+  "files": [
+    "lib"
+  ],
   "license": "MIT",
   "main": "lib/index.js",
-  
   "engines": {
     "node": ">=4.1.0",
     "npm": ">=2.14.0"
@@ -26,10 +27,15 @@
     "test": "./node_modules/.bin/gulp coverage && && ./node_modules/.bin/codeclimate-test-reporter < coverage/lcov.info",
     "prepublish": "./node_modules/.bin/gulp rebuild"
   },
-  "dependencies": {},
+  "dependencies": {
+    "chalk": "^1.1.1",
+    "debug": "^2.2.0",
+    "lodash": "^3.10.1",
+    "toposort": "^0.2.12"
+  },
   "devDependencies": {
     "app-root-path": "^1.0.0",
-    "babel-eslint": "^4.1.2",
+    "babel-eslint": "^4.1.5",
     "bluebird": "^2.10.2",
     "chai": "^2.3.0",
     "chai-as-promised": "^5.1.0",
