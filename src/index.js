@@ -18,13 +18,13 @@ let instance = new Core();
 
 
 /* Singleton function */
-module.exports = function Ignis() {
+exports = exports = function Ignis() {
   return instance;
 };
 
 
 /* Reset instance */
-module.exports.reset = function() {
+exports.reset = function() {
   instance = new Core();
 };
 
@@ -33,15 +33,23 @@ module.exports.reset = function() {
 instance.use(Http);
 instance.use(Config);
 
+/* Attach utilities */
+exports.Util = { };
+exports.Util.deepForEach = require('./util/deep-for-each');
+exports.Util.errorIs = require('./util/error-is');
+exports.Util.expressify = require('./util/expressify');
+exports.Util.serviceName = require('./util/service-name');
+exports.Util.unpromisify = require('./util/unpromisify');
+
 /* Attach error and panic shortcuts */
-module.exports.Error = IgnisError;
+exports.Error = IgnisError;
 Core.prototype.panic = IgnisError.panic;
 Core.prototype.deny = IgnisError.deny;
 Core.prototype.notFound = IgnisError.notFound;
 
 /* Expose builtin services */
-module.exports.Core = Core;
-module.exports.Http = Http;
-module.exports.Config = Config;
-module.exports.Service = Service;
-module.exports.DataSource = DataSource;
+exports.Core = Core;
+exports.Http = Http;
+exports.Config = Config;
+exports.Service = Service;
+exports.DataSource = DataSource;

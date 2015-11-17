@@ -10,12 +10,9 @@ import Path        from 'path';
 import Debug       from 'debug';
 import Chalk       from 'chalk';
 import Express     from 'express';
-import {
-  expressify,
-  errorIs
-}                  from 'ignis-util';
-
 import Service     from '../service';
+import expressify  from '../util/expressify';
+import errorIs     from '../util/error-is';
 
 const debug = Debug('ignis:http');
 

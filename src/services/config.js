@@ -12,9 +12,8 @@ import Chalk       from 'chalk';
 import Walker      from 'walker';
 import AppRoot     from 'app-root-path';
 import Bluebird    from 'bluebird';
-import * as Util   from 'ignis-util';
 import Service     from '../service';
-
+import deepForEach from '../util/deep-for-each';
 
 const debug = Debug('ignis:config');
 
@@ -102,7 +101,7 @@ export default class ConfigService extends Service {
     const old = _.get(store, key);
 
     /* Substitute envars as specified */
-    Util.deepForEach(value, (v, k, o) => {
+    deepForEach(value, (v, k, o) => {
       if (typeof v === 'string' && substPattern.test(v)) {
         const name = v.substring(1);
         const envar = process.env[name];

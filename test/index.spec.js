@@ -33,7 +33,9 @@ require('./services/http.spec.js');
 require('./services/config.spec.js');
 
 describe('Utilities', function() {
-
+  require('./util/deep-for-each.spec.js');
+  require('./util/error-is.spec.js');
+  require('./util/expressify.spec.js');
   require('./util/service-name.spec.js');
-
+  require('./util/unpromisify.spec.js');
 });
