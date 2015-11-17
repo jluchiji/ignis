@@ -24,3 +24,9 @@ require('./service.spec.js');
 require('./core.spec.js');
 
 require('./services/http.spec.js');
+
+describe('Utilities', function() {
+
+  require('./util/service-name.spec.js');
+
+});

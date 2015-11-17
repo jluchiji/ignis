@@ -12,7 +12,7 @@ import Toposort    from 'toposort';
 
 
 import Service     from './service';
-
+import ServiceName from './util/service-name';
 
 const debug = Debug('ignis:core');
 
@@ -92,7 +92,7 @@ export default class Ignis {
     for (const service of Ignis[$$services]) {
 
       /* Normalize service name */
-      const name = _.kebabCase(service.name.replace(/service$/i, ''));
+      const name = ServiceName(service);
       debug(Chalk.bold.cyan('create') + ` ${name}`);
 
       /* Instantiate and save service reference */
