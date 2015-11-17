@@ -81,6 +81,13 @@ export default class Ignis {
 
 
   /**
+   * Finds a data source.
+   */
+  model(name) {
+    return this.service(`data:${name}`);
+  }
+
+  /**
    * Initializes all registered services.
    */
   async init() {

@@ -7,6 +7,7 @@
 
 const Ignis = dofile('lib/core');
 const Service = dofile('lib/service');
+const DataSource = dofile('lib/data-source');
 const Bluebird = require('bluebird');
 
 
@@ -94,6 +95,24 @@ describe('Ignis.Core', function() {
       expect(() => this.ignis.service('foo'))
         .to.throw('Service [foo] is not ready.');
     });
+
+  });
+
+  describe('model(name)', function() {
+
+    it('should find a data model', co(function*() {
+      const source = function FooBarDataSource() { };
+      source.prototype = new DataSource();
+
+      this.ignis.use(source);
+
+      yield this.ignis.init();
+
+      const actual = this.ignis.model('foo-bar');
+      expect(actual)
+        .to.exist
+        .to.be.an.instanceOf(source);
+    }));
 
   });
 
