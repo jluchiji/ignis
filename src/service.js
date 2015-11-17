@@ -18,12 +18,23 @@ export default class Service {
   constructor(ignis) {
     this.ignis = ignis;
     this.ready = false;
+
+    const emit = this.ignis.emit;
+    this.emit = this.ignis::emit;
   }
 
   /**
    * Initializes the service.
+   * Acquire resources and connect to network here.
    */
   async init() { }
+
+
+  /**
+   * Called after initialization.
+   * Generate shortcuts here.
+   */
+  postinit() { }
 
 
   /**

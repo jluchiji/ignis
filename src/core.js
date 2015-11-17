@@ -9,6 +9,7 @@ import _           from 'lodash';
 import Debug       from 'debug';
 import Chalk       from 'chalk';
 import Toposort    from 'toposort';
+import Monologue   from 'monologue.js';
 
 
 import Service     from './service';
@@ -26,9 +27,10 @@ const $$services = Symbol();
  * Ignis class.
  * The service manager.
  */
-export default class Ignis {
+export default class Ignis extends Monologue {
 
   constructor() {
+    super();
     this[$$services] = new Map();
     this.startup = null;
   }
@@ -128,6 +130,13 @@ export default class Ignis {
       /* Invoke initialization callback */
       await service.init(...deps);
       service.ready = true;
+    }
+
+    /* Execute post-initialization operations */
+    for (const name of sorted) {
+      debug(Chalk.bold.green('postinit') + ` ${name}`);
+      const service = this[$$services].get(name);
+      service.postinit();
     }
 
   }

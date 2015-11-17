@@ -20,10 +20,16 @@ global.Sinon       = require('sinon');
 /*!
  * Start tests.
  */
+beforeEach(function() {
+  this.emit = Sinon.spy();
+  this.ignis = { emit: this.emit };
+});
+
 require('./service.spec.js');
 require('./core.spec.js');
 
 require('./services/http.spec.js');
+require('./services/config.spec.js');
 
 describe('Utilities', function() {
 

@@ -28,7 +28,7 @@ describe('Ignis.Core', function() {
     this.ignis = new Ignis();
 
     this.derived = function TestService() { };
-    this.derived.prototype = new Service();
+    this.derived.prototype = new Service(this.ignis);
 
     this.ignis.use(() => { });
   });
@@ -102,7 +102,7 @@ describe('Ignis.Core', function() {
 
     it('should find a data model', co(function*() {
       const source = function FooBarDataSource() { };
-      source.prototype = new DataSource();
+      source.prototype = new DataSource(this.ignis);
 
       this.ignis.use(source);
 
@@ -122,11 +122,11 @@ describe('Ignis.Core', function() {
       this.ignis = new Ignis();
 
       this.oneService = function oneService() { };
-      this.oneService.prototype = new Service();
+      this.oneService.prototype = new Service(this.ignis);
       this.oneService.prototype.init = Sinon.spy(() => Bluebird.resolve());
 
       this.twoService = function twoService() { };
-      this.twoService.prototype = new Service();
+      this.twoService.prototype = new Service(this.ignis);
       this.twoService.prototype.init = Sinon.spy(() => Bluebird.resolve());
 
       Service.deps('one')(this.twoService);

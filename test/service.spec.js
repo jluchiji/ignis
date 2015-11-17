@@ -11,11 +11,11 @@ describe('Ignis.Service', function() {
 
   beforeEach(function() {
     this.derived = function TestService() { };
-    this.derived.prototype = new Service();
+    this.derived.prototype = new Service(this.ignis);
   });
 
   it('should create Service instance', function() {
-    const actual = new Service();
+    const actual = new Service(this.ignis);
 
     expect(actual)
       .to.exist

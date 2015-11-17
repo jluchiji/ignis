@@ -33,7 +33,9 @@
     "express": "^4.13.3",
     "ignis-util": "^0.1.6",
     "lodash": "^3.10.1",
-    "toposort": "^0.2.12"
+    "monologue.js": "^0.3.4",
+    "toposort": "^0.2.12",
+    "walker": "^1.0.7"
   },
   "devDependencies": {
     "app-root-path": "^1.0.0",
@@ -63,5 +65,48 @@
     "sinon": "^1.15.4",
     "sinon-chai": "^2.8.0"
   },
-  "keywords": []
+  "keywords": [],
+  "babel": {
+    "auxiliaryCommentBefore": "istanbul ignore next",
+    "optional": [
+      "bluebirdCoroutines",
+      "es7.functionBind",
+      "es7.decorators"
+    ],
+    "blacklist": [
+      "es6.forOf",
+      "es6.constants",
+      "es6.blockScoping",
+      "es6.templateLiterals",
+      "es7.classProperties"
+    ]
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": "airbnb/base",
+    "rules": {
+      "new-cap": 0,
+      "no-undef": 2,
+      "id-length": 0,
+      "func-names": 0,
+      "no-console": 1,
+      "key-spacing": 0,
+      "padded-blocks": 0,
+      "no-multi-spaces": 0,
+      "no-const-assign": 2,
+      "no-param-reassign": 0,
+      "comma-dangle": [
+        1,
+        "never"
+      ]
+    },
+    "ecmaFeatures": {
+      "generators": true
+    },
+    "envs": {
+      "node": true,
+      "commonjs": true,
+      "browser": false
+    }
+  }
 }

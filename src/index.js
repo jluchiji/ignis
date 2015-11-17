@@ -26,3 +26,4 @@ module.exports.reset = function() {
 
 /* Register core services */
 instance.use(require('./services/http'));
+instance.use(require('./services/config'));

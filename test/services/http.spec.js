@@ -10,14 +10,29 @@ const HttpService = dofile('./lib/services/http');
 describe('Ignis.HttpService', function() {
 
   it('should create Ignis.HttpService instances', function() {
-    const actual = new HttpService();
+    const actual = new HttpService(this.ignis);
 
     expect(actual)
       .to.be.instanceof(HttpService);
   });
 
   beforeEach(function() {
-    this.http = new HttpService();
+    this.http = new HttpService(this.ignis);
+  });
+
+  describe('postinit', function() {
+
+    it('should attach shortcuts to Ignis root', function() {
+      this.http.postinit();
+
+      expect(this.ignis)
+        .to.have.property('mount')
+        .that.is.a('function');
+      expect(this.ignis)
+        .to.have.property('error')
+        .that.is.a('function');
+    });
+
   });
 
   describe('pre(factory)', function() {

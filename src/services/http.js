@@ -53,6 +53,18 @@ export default class HttpService extends Service {
 
 
   /**
+   * Attach conveniece functions to Ignis root.
+   */
+  postinit() {
+    const mount = this.mount;
+    this.ignis.mount = this::mount;
+
+    const error = this.error;
+    this.ignis.error = this::error;
+  }
+
+
+  /**
    * Registers a pre-callback middleware factory.
    */
   pre(factory) {

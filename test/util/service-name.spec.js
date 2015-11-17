@@ -15,7 +15,7 @@ describe('serviceName(service)', function() {
 
   it('should normalize name of a Service', function() {
     const derived = function FooBarService() { };
-    derived.prototype = new Service();
+    derived.prototype = new Service(this.ignis);
 
     const actual = ServiceName(derived);
 
@@ -25,7 +25,7 @@ describe('serviceName(service)', function() {
 
   it('should normalize name of a DataSource', function() {
     const derived = function HelloWorldDataSource() { };
-    derived.prototype = new DataSource();
+    derived.prototype = new DataSource(this.ignis);
 
     const actual = ServiceName(derived);
 
