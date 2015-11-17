@@ -66,7 +66,22 @@ describe('Ignis.Service', function() {
 
   });
 
-  describe('@export', function() {
+  describe('@abstract', function() {
+
+    it('should mark a service as abstract', function() {
+
+      Service.abstract(this.derived);
+
+      const actual = Service.meta(this.derived, 'abstract');
+
+      expect(actual)
+        .to.be.true;
+
+    });
+
+  });
+
+  describe('@export(options)', function() {
 
     it('should add member to export list', function() {
 

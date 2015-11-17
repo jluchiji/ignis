@@ -86,6 +86,14 @@ export default class Service {
     };
   }
 
+
+  /**
+   * @static (decorator) Indicates that a service is abstract.
+   */
+  static abstract(target) {
+    Service.meta(target, 'abstract', true);
+  }
+
 }
 
 

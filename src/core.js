@@ -49,6 +49,10 @@ export default class Ignis extends Monologue {
     /* If this is a Service, register it */
     if (service.prototype instanceof Service) {
 
+      if (Service.meta(service, 'abstract')) {
+        throw new Error(`${service.name} is abstract, you need to extend it first.`);
+      }
+
       if (Ignis[$$services].has(service)) {
         debug(Chalk.bold.cyan('skip') + ` ${service.name}`);
         return;

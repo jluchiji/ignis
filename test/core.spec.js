@@ -101,6 +101,16 @@ describe('Ignis.Core', function() {
 
     });
 
+    it('should refuse to register abstract services', function() {
+
+      Service.abstract(this.derived);
+
+      expect(() => {
+        this.ignis.use(this.derived);
+      }).to.throw('TestService is abstract, you need to extend it first.');
+
+    });
+
   });
 
   describe('service(name)', function() {
