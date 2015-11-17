@@ -10,6 +10,7 @@ import Http        from './services/http';
 import Config      from './services/config';
 import Service     from './service';
 import DataSource  from './data-source';
+import IgnisError  from './error';
 
 
 /* Singleton instance */
@@ -32,7 +33,14 @@ module.exports.reset = function() {
 instance.use(Http);
 instance.use(Config);
 
+/* Attach error and panic shortcuts */
+module.exports.Error = IgnisError;
+Core.prototype.panic = IgnisError.panic;
+Core.prototype.deny = IgnisError.deny;
+Core.prototype.notFound = IgnisError.notFound;
+
 /* Expose builtin services */
+module.exports.Core = Core;
 module.exports.Http = Http;
 module.exports.Config = Config;
 module.exports.Service = Service;

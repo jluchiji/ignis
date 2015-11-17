@@ -27,6 +27,7 @@ beforeEach(function() {
 
 require('./service.spec.js');
 require('./core.spec.js');
+require('./error.spec.js');
 
 require('./services/http.spec.js');
 require('./services/config.spec.js');
