@@ -29,7 +29,6 @@ exports.reset = function() {
 
 
 /* Register core services */
-instance.use(Http);
 instance.use(Config);
 
 /* Attach utilities */
