@@ -162,6 +162,7 @@ export default class Ignis extends Monologue {
       /* Invoke initialization callback */
       await service.init(...deps);
       service.ready = true;
+      debug(Chalk.bold.green('success') + ` ${name}`);
     }
 
     /* Execute post-initialization operations */
