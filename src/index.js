@@ -9,7 +9,6 @@ import Core        from './core';
 import Http        from './services/http';
 import Config      from './services/config';
 import Service     from './service';
-import DataSource  from './data-source';
 import IgnisError  from './error';
 
 
@@ -52,4 +51,3 @@ exports.Core = Core;
 exports.Http = Http;
 exports.Config = Config;
 exports.Service = Service;
-exports.DataSource = DataSource;

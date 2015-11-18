@@ -111,13 +111,6 @@ export default class Ignis extends Monologue {
 
 
   /**
-   * Finds a data source.
-   */
-  model(name) {
-    return this.service(`data:${name}`);
-  }
-
-  /**
    * Initializes all registered services.
    * Wraps the __init().
    */
