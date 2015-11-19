@@ -175,6 +175,18 @@ export default class Ignis extends Monologue {
   }
 
 
+  /**
+   * Tests if environment matches the expression.
+   * If {expr} is not a RegExp, it is compiled into a RegExp with 'i' flag.
+   */
+  env(expr) {
+    if (!(expr instanceof RegExp)) {
+      expr = new RegExp(`(${expr})`, 'i');
+    }
+    return expr.test(process.env.NODE_ENV);
+  }
+
+
 }
 
 

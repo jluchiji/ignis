@@ -8,6 +8,7 @@
 import Core        from './core';
 import Http        from './services/http';
 import Config      from './services/config';
+import Endpoint    from './services/endpoint';
 import Service     from './service';
 import IgnisError  from './error';
 
@@ -50,3 +51,4 @@ exports.Core = Core;
 exports.Http = Http;
 exports.Config = Config;
 exports.Service = Service;
+exports.Http.Endpoint = Endpoint;

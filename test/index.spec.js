@@ -31,6 +31,7 @@ require('./error.spec.js');
 
 require('./services/http.spec.js');
 require('./services/config.spec.js');
+require('./services/endpoint.spec.js');
 
 describe('Utilities', function() {
   require('./util/deep-for-each.spec.js');

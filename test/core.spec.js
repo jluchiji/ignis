@@ -176,4 +176,27 @@ describe('Ignis.Core', function() {
 
   });
 
+  describe('env(expr)', function() {
+
+    before(function() { this._env = process.env.NODE_ENV; });
+    after(function() { process.env.NODE_ENV = this._env; });
+
+    it('should match NODE_ENV', function() {
+      process.env.NODE_ENV = 'DeVelopment';
+      expect(this.ignis.env('staging|dev'))
+        .to.be.true;
+      expect(this.ignis.env('staging|prod'))
+        .to.be.false;
+    });
+
+    it('should use regex if one is provided', function() {
+      process.env.NODE_ENV = 'DeVelopment';
+      expect(this.ignis.env(/^DeVelopment$/))
+        .to.be.true;
+      expect(this.ignis.env(/^development$/))
+        .to.be.false;
+    });
+
+  });
+
 });

@@ -6,6 +6,7 @@
  */
 
 import _           from 'lodash';
+import Ignis       from './core';
 
 
 /* Symbol to hide service metadata */
@@ -41,6 +42,14 @@ export default class Service {
 
 
   /**
+   * Gets the base class for the service.
+   */
+  get base() {
+    return this[Ignis.$$base];
+  }
+
+
+  /**
    * @static Gets/sets a piece of metadata.
    */
   static meta(target, key, value) {
@@ -62,7 +71,8 @@ export default class Service {
    */
   static deps(...deps) {
     return function(target) {
-      Service.meta(target, 'deps', deps);
+      const d = (Service.meta(target, 'deps') || [ ]).concat(deps);
+      Service.meta(target, 'deps', d);
     };
   }
 

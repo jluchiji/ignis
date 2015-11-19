@@ -5,6 +5,7 @@
  * @license MIT
  */
 
+const Ignis   = dofile('lib/core');
 const Service = dofile('lib/service');
 
 describe('Ignis.Service', function() {
@@ -22,6 +23,22 @@ describe('Ignis.Service', function() {
       .to.be.instanceOf(Service);
 
     return actual.init();
+  });
+
+  describe('get base()', function() {
+
+    beforeEach(function() {
+      this.instance = new this.derived(this.ignis);
+      this.instance[Ignis.$$base] = this.derived;
+    });
+
+    it('should get the base service class', function() {
+      const actual = this.instance.base;
+
+      expect(actual)
+        .to.equal(this.derived);
+    });
+
   });
 
   describe('meta(key, value)', function() {
