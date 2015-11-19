@@ -8,9 +8,6 @@
 import _           from 'lodash';
 import Ignis       from '../core';
 import Service     from '../service';
-import {
-  autobind
-}                  from 'core-decorators';
 
 
 /**
@@ -47,7 +44,7 @@ export default class EndpointService extends Service {
         throw new Error(`Endpoint method [${prop}] must have a mount path`);
       }
       const payload = _.assign({ }, defaults, options[prop]);
-      payload.handler = this[prop];
+      payload.handler = this[prop].bind(this);
       this.http.mount(root, payload);
     }
   }
@@ -79,10 +76,6 @@ export default class EndpointService extends Service {
     return function(target, name, descriptor) {
       EndpointService.option('path', path)(target, name, descriptor);
       EndpointService.option('status', status)(target, name, descriptor);
-      /* All endpoint methods also get autobind */
-      if (!(target.prototype instanceof EndpointService)) {
-        autobind(target, name, descriptor);
-      }
     };
   }
 

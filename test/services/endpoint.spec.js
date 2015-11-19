@@ -67,7 +67,7 @@ describe('Ignis.Http.EndpointService', function() {
       EndpointService.option('foo', 'bar')(this.derived);
       EndpointService.option('greeting', 'hello')(this.derived);
 
-      this.derived.prototype.foo = function() { };
+      this.derived.prototype.foo = function() { return this; };
       EndpointService.option('foo', 'baz')(this.derived.prototype, 'foo');
       EndpointService.path('POST /', 123)(this.derived.prototype, 'foo');
       this.ignis.use(this.derived);
@@ -78,13 +78,18 @@ describe('Ignis.Http.EndpointService', function() {
         .to.be.calledWith('/test');
       const arg = this.cb.firstCall.args[1];
       expect(arg)
-        .to.deep.equal({
-          path: 'POST /',
-          status: 123,
-          foo: 'baz',
-          greeting: 'hello',
-          handler: this.derived.prototype.foo
-        });
+        .to.have.property('path', 'POST /');
+      expect(arg)
+        .to.have.property('status', 123);
+      expect(arg)
+        .to.have.property('foo', 'baz');
+      expect(arg)
+        .to.have.property('greeting', 'hello');
+      expect(arg)
+        .to.have.property('handler')
+        .that.is.a('function');
+      expect(arg.handler())
+        .to.equal(this.ignis.service('test'));
     }));
 
   });
