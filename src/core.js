@@ -67,14 +67,19 @@ export default class Ignis extends Monologue {
         debug(Chalk.bold.yellow('export ') + name);
         debug(options);
 
-        const descriptor = {
-          configurable: false,
-          enumerable: options.enumerable,
-          readonly: options.readonly,
-          get: () => service[name],
-          set: options.readonly ? undefined : v => { service[name] = v; }
-        };
-        Object.defineProperty(Ignis.prototype, name, descriptor);
+
+        if (options.static) {
+          _.set(Ignis, options.path || name, service[name]);
+        } else {
+          const descriptor = {
+            configurable: false,
+            enumerable: options.enumerable,
+            readonly: options.readonly,
+            get: () => service[name],
+            set: options.readonly ? undefined : v => { service[name] = v; }
+          };
+          Object.defineProperty(Ignis.prototype, name, descriptor);
+        }
       });
       return;
     }

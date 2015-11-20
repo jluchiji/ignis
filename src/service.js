@@ -91,7 +91,11 @@ export default class Service {
       if (list[name]) { throw new Error(`Duplicate export: ${name}`); }
 
       /* Add options to metadata */
-      list[name] = _.defaults(options, { readonly: false, enumerable: true });
+      list[name] = _.defaults(options, {
+        static: false,
+        readonly: false,
+        enumerable: true
+      });
       Service.meta(target, 'exports', list);
     };
   }

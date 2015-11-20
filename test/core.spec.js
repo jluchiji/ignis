@@ -88,6 +88,27 @@ describe('Ignis.Core', function() {
 
     });
 
+    it('should allow static exports to Ignis class', function() {
+      Service.export({ static: true })(this.derived, 'hello');
+      Service.export({ static: true, path: 'foo.bar' })(this.derived, 'world');
+      this.ignis.use(this.derived);
+
+      expect(Ignis)
+        .to.have.property('hello')
+        .that.is.a('function');
+      expect(Ignis)
+        .to.have.deep.property('foo.bar')
+        .that.is.a('function');
+
+      Ignis.hello();
+      Ignis.foo.bar();
+
+      expect(this.derived.hello)
+        .to.be.calledOnce;
+      expect(this.derived.world)
+        .to.be.calledOnce;
+    });
+
     it('should pass on assigments to actual exports if not readonly', function() {
 
       Service.export()(this.derived, 'world');

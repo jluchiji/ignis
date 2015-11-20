@@ -108,7 +108,7 @@ describe('Ignis.Service', function() {
 
       expect(actual)
         .to.have.property('foo')
-        .that.deep.equals({ enumerable: true, readonly: false });
+        .that.deep.equals({ enumerable: true, readonly: false, static: false });
 
     });
 
