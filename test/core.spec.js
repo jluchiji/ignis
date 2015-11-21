@@ -89,19 +89,21 @@ describe('Ignis.Core', function() {
     });
 
     it('should allow static exports to Ignis class', function() {
+      Ignis.exports = { };
+
       Service.export({ static: true })(this.derived, 'hello');
       Service.export({ static: true, path: 'foo.bar' })(this.derived, 'world');
       this.ignis.use(this.derived);
 
-      expect(Ignis)
+      expect(Ignis.exports)
         .to.have.property('hello')
         .that.is.a('function');
-      expect(Ignis)
+      expect(Ignis.exports)
         .to.have.deep.property('foo.bar')
         .that.is.a('function');
 
-      Ignis.hello();
-      Ignis.foo.bar();
+      Ignis.exports.hello();
+      Ignis.exports.foo.bar();
 
       expect(this.derived.hello)
         .to.be.calledOnce;

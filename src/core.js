@@ -69,7 +69,7 @@ export default class Ignis extends Monologue {
 
 
         if (options.static) {
-          _.set(Ignis, options.path || name, service[name]);
+          _.set(Ignis.exports, options.path || name, service[name]);
         } else {
           const descriptor = {
             configurable: false,
