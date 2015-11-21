@@ -17,12 +17,12 @@ import Bluebird    from 'bluebird';
  * @param          {fn}        Promise-producing handler function.
  * @param          {status}    Status code to return on success (default: 200).
  */
-export default function expressify(fn, ignis, status = 200) {
+export default function expressify(fn, status = 200) {
 
   /* Otherwise, unpromisify */
   return function(req, res, next) {
     return Bluebird
-      .try(()    => { return fn(ignis, req); })
+      .try(()    => { return fn(req); })
       .then(data => { res.status(status).send(data); next(); })
       .catch(next);
   };

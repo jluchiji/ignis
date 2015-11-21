@@ -70,7 +70,7 @@ describe('expressify(fn, ignis, status)', function() {
     res.status = Sinon.spy(function() { return res; });
     res.send   = Sinon.spy(function() { return res; });
 
-    const wrapped = expressify(fn, null, 999);
+    const wrapped = expressify(fn, 999);
 
     expect(wrapped)
       .to.be.a('function');
