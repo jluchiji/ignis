@@ -6,11 +6,6 @@
  */
 
 import Core        from './core';
-import Http        from './services/http';
-import Config      from './services/config';
-import Endpoint    from './services/endpoint';
-import Service     from './service';
-import IgnisError  from './error';
 
 
 /* Singleton instance */
@@ -29,8 +24,17 @@ exports.reset = function() {
 };
 
 
+import Http        from './services/http';
+import Config      from './services/config';
+import Endpoint    from './services/endpoint';
+import Service     from './service';
+import IgnisError  from './error';
+
+
 /* Register core services */
 instance.use(Config);
+instance.import(Endpoint);
+
 
 /* Attach utilities */
 exports.Util = { };
@@ -52,3 +56,9 @@ exports.Http = Http;
 exports.Config = Config;
 exports.Service = Service;
 exports.Http.Endpoint = Endpoint;
+
+
+/* Export some core decorators */
+exports.deps = Service.deps;
+exports.export = Service.export;
+exports.mount = Endpoint.path;

@@ -61,26 +61,8 @@ export default class Ignis extends Monologue {
       debug(Chalk.bold.cyan('register') + ` ${service.name}`);
       Ignis[$$services].add(service);
 
-      /* Register exports */
-      const exps = Service.meta(service, 'exports') || { };
-      _.forEach(exps, (options, name) => {
-        debug(Chalk.bold.yellow('export ') + name);
-        debug(options);
+      this.import(service);
 
-
-        if (options.static) {
-          _.set(Ignis.exports, options.path || name, service[name]);
-        } else {
-          const descriptor = {
-            configurable: false,
-            enumerable: options.enumerable,
-            readonly: options.readonly,
-            get: () => service[name],
-            set: options.readonly ? undefined : v => { service[name] = v; }
-          };
-          Object.defineProperty(Ignis.prototype, name, descriptor);
-        }
-      });
       return;
     }
 
@@ -92,6 +74,31 @@ export default class Ignis extends Monologue {
     }
 
     throw new Error('Unexpected service type.');
+  }
+
+
+  /**
+   * Exposes properties exported by services.
+   */
+  import(service) {
+    const exps = Service.meta(service, 'exports') || { };
+    _.forEach(exps, (options, name) => {
+      debug(Chalk.bold.yellow('export ') + name);
+      debug(options);
+
+      if (options.static) {
+        _.set(Ignis.exports, options.path || name, service[name]);
+      } else {
+        const descriptor = {
+          configurable: false,
+          enumerable: options.enumerable,
+          readonly: options.readonly,
+          get: () => service[name],
+          set: options.readonly ? undefined : v => { service[name] = v; }
+        };
+        Object.defineProperty(Ignis.prototype, name, descriptor);
+      }
+    });
   }
 
 
@@ -149,6 +156,7 @@ export default class Ignis extends Monologue {
 
       /* Push dependency info into toposort */
       const deps = Service.meta(service, 'deps') || [ ];
+      debug(deps);
       for (const dep of deps) { graph.push([ dep, name ]); }
       if (deps.length === 0) { graph.push([ name ]); }
     }

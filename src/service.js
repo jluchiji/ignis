@@ -71,8 +71,7 @@ export default class Service {
    */
   static deps(...deps) {
     return function(target) {
-      const d = (Service.meta(target, 'deps') || [ ]).concat(deps);
-      Service.meta(target, 'deps', d);
+      Service.meta(target, 'deps', deps);
     };
   }
 
