@@ -173,6 +173,10 @@ export default class Ignis extends Monologue {
       debug(Chalk.bold.yellow('init') + ` ${name}`);
       const service = this[$$services].get(name);
 
+      if (!service) {
+        throw new Error(`Service [${name}] is not defined.`);
+      }
+
       /* Extract dependencies */
       let deps = Service.meta(service[$$base], 'deps') || [ ];
       deps = deps.map(i => this.service(i));
