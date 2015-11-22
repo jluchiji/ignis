@@ -63,6 +63,11 @@ export default class Ignis extends Monologue {
 
       this.import(service);
 
+      /* Call onregister callback if specified */
+      if (typeof service.onregister === 'function') {
+        service.onregister(this);
+      }
+
       return;
     }
 

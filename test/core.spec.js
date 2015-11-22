@@ -46,6 +46,15 @@ describe('Ignis.Core', function() {
 
     });
 
+    it('should call Service.onregister() callback', function() {
+      this.derived.onregister = Sinon.spy();
+      this.ignis.use(this.derived);
+
+      expect(this.derived.onregister)
+        .to.be.calledOnce
+        .to.be.calledWith(this.ignis);
+    });
+
     it('should invoke a callback', function() {
 
       const callback = Sinon.spy();
